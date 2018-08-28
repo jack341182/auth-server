@@ -9,7 +9,7 @@ services:
     env_file:
       - /home/service/common/common.env
     environment:
-      REDIS_DATABASE: 0
+      REDIS_DATABASE: 3
     container_name: libra-auth-server
 networks:
   default:
