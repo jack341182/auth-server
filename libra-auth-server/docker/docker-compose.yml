@@ -1,0 +1,17 @@
+version: '2'
+services:
+  libra-auth-server:
+    image: libra-auth-server
+    ports:
+      - "6666:8080"
+    expose:
+      - 8080
+    env_file:
+      - /home/service/common/common.env
+    environment:
+      REDIS_DATABASE: 0
+    container_name: libra-auth-server
+networks:
+  default:
+    external:
+      name: spring-cloud-network

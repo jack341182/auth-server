@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <groupId>com.kybb.common.cloud</groupId>
+    <version>1.0-SNAPSHOT</version>
+    <artifactId>libra-auth-common</artifactId>
+
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <name>libra-auth-common</name>
+    <dependencies>
+
+        <!--  参见 https://github.com/spring-projects/spring-security-oauth/issues/1230#event-1352041281   -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.security.oauth</groupId>
+                    <artifactId>spring-security-oauth2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>2.3.3.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.kybb.common.cloud</groupId>
+            <artifactId>libra-cloud-commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>zcckj_releases</id>
+            <url>http://10.1.10.240:8081/nexus/content/repositories/zcckj_releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>zcckj_snapshots</id>
+            <url>http://10.1.10.240:8081/nexus/content/repositories/zcckj_snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.kybb.common.cloud</groupId>
+                <artifactId>libra-common-dependencies</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

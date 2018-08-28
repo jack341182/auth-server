@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    consul:
+      host: ${DS_SERVER_HOST:10.1.80.234}
+
+
+feign:
+  hystrix:
+    enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
