@@ -4,9 +4,9 @@ spring:
       host: ${DS_SERVER_HOST:10.1.80.234}
 
 
-feign:
-  hystrix:
-    enabled: true
+#feign:
+#  hystrix:
+#    enabled: false
 management:
   endpoints:
     web:
