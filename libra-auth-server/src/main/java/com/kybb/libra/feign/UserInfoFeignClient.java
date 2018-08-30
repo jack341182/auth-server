@@ -44,20 +44,19 @@ class UserInfoFeignClientFallbackFactory implements FallbackFactory<UserInfoFeig
             @Override
             public ResponseEntity<Body<AccountVO>> accounts(AccountRequest accountRequest) {
                 log.error("[exception] " + throwable.getClass().getName() + " [error message] " + throwable.getMessage() + "  [args] " + accountRequest);
-                return ResponseUtil.formThrowError(throwable, applicationName);
+                return ResponseUtil.ok(null);
             }
 
             @Override
             public ResponseEntity<Body<List<UserInfoVO>>> getUserInfo(List<Long> var1) {
                 log.error("[exception] " + throwable.getClass().getName() + " [error message] " + throwable.getMessage() + "  [args] " + var1);
-                return ResponseUtil.formThrowError(throwable, applicationName);
-
+                return ResponseUtil.ok(null);
             }
 
             @Override
             public ResponseEntity updateTokenByUserId(long id, String token) {
                 log.error("[exception] " + throwable.getClass().getName() + " [error message] " + throwable.getMessage() + "  [args] " + token + "," + id);
-                return ResponseUtil.formThrowError(throwable, applicationName);
+                return ResponseUtil.ok(null);
 
             }
         };
