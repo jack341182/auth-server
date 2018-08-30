@@ -4,8 +4,10 @@ import com.kybb.common.enums.UserTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.security.core.userdetails.User;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -15,7 +17,8 @@ import java.util.Collection;
  */
 @Getter
 @Setter
-public class IntegrationUser extends User {
+public class IntegrationUser extends User implements Serializable {
+    private static final long serialVersionUID = 600L;
     private Long id;
     private String wxOpenId;
     private String email;

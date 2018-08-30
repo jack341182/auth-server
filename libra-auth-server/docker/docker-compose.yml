@@ -11,6 +11,7 @@ services:
     environment:
       REDIS_DATABASE: 3
     container_name: libra-auth-server
+    mem_limit: 800
 networks:
   default:
     external:
