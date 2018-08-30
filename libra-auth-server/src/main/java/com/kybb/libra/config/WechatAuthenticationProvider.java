@@ -23,7 +23,6 @@ public class WechatAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        log.info("==========>    处理微信用户信息");
         //能进到这说明authentication是SmsCodeAuthenticationToken，转一下
         WechatAuthenticationToken authenticationToken = (WechatAuthenticationToken) authentication;
         //token.getPrincipal()就是手机号 mobile

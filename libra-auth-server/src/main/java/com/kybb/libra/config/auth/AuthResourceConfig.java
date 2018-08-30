@@ -46,7 +46,7 @@ public class AuthResourceConfig extends ResourceServerConfigurerAdapter {
                 .failureHandler(authenticationFailureHandler) //登录失败后的处理
                 .and()
                 .authorizeRequests()
-                .antMatchers("/sms/code","/oauth/check_token","/actuator/**","/encryption/code").permitAll()
+                .antMatchers("/token/evict","/sms/code","/sms/test","/oauth/check_token","/actuator/**","/encryption/code").permitAll()
                 .and().csrf().disable()
                 .apply(smsCodeAuthenticationSecurityConfig);
     }

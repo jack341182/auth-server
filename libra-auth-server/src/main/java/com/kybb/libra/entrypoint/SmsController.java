@@ -1,15 +1,19 @@
 package com.kybb.libra.entrypoint;
 
 import com.kybb.common.cloud.integration.SmsCodeRequest;
+import com.kybb.common.http.Body;
 import com.kybb.common.http.ResponseUtil;
+
+import com.kybb.libra.feign.UserInfoFeignClient;
 import com.kybb.libra.service.SmsCodeService;
+import com.kybb.solar.user.vo.UserInfoVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Auther: vicykie
@@ -22,6 +26,12 @@ public class SmsController {
     @Autowired
     private SmsCodeService smsCodeService;
 
+
+    @Autowired
+    private UserInfoFeignClient userFeignClient;
+
+
+
     /**
      * 发送短信验证码
      *
@@ -30,6 +40,7 @@ public class SmsController {
      */
     @PostMapping("/code")
     public ResponseEntity addCode(@RequestBody SmsCodeRequest smsCodeRequest) {
+
         if (StringUtils.isEmpty(smsCodeRequest.getMobile())) {
             return ResponseUtil.badRequest("参数错误。mobile为空");
         }
@@ -37,6 +48,15 @@ public class SmsController {
             return ResponseUtil.badRequest("参数错误。deviceId为空");
         }
         return ResponseUtil.ok(smsCodeService.saveAndSendCode(smsCodeRequest));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity test() {
+        List<Long> ids = new ArrayList<>();
+        ids.add(4L);
+//        ResponseEntity<Body<List<UserInfoVO>>> userInfo = userFeignClient.getUserInfo(ids);
+
+        return ResponseEntity.ok("");
     }
 
 }

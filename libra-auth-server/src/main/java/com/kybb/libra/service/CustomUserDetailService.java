@@ -5,7 +5,7 @@ import com.kybb.common.cloud.integration.IntegrationUser;
 import com.kybb.common.cloud.util.HttpUtil;
 import com.kybb.common.http.Body;
 import com.kybb.libra.feign.UserAuthFeignClient;
-import com.kybb.libra.feign.UserFeignClient1;
+import com.kybb.libra.feign.UserInfoFeignClient;
 import com.kybb.solar.user.enums.ApplicationTypeEnum;
 import com.kybb.solar.user.request.AccountRequest;
 import com.kybb.solar.user.vo.AccountVO;
@@ -23,6 +23,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
@@ -45,7 +47,7 @@ import static com.kybb.common.cloud.constants.AuthorizationServerConstants.URL_S
 @Slf4j
 public class CustomUserDetailService implements UserDetailsService {
     @Autowired
-    private UserFeignClient1 userFeignClient;
+    private UserInfoFeignClient userFeignClient;
     @Autowired
     private UserAuthFeignClient userAuthFeignClient;
 //    @Autowired
@@ -58,6 +60,9 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Autowired
     private TokenStore tokenStore;
+
+    @Autowired
+    private ClientDetailsService clientDetailsService;
 
     @Override
     public IntegrationUser loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -121,6 +126,7 @@ public class CustomUserDetailService implements UserDetailsService {
             integrationUser.setUserType(accountVO.getUserType());
             return integrationUser;
         } else {
+            log.error("服务器异常=== user-center-api");
             throw new InternalAuthenticationServiceException("服务器异常。user-center-api");
         }
     }

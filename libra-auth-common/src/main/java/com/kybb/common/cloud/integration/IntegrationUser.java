@@ -21,7 +21,7 @@ public class IntegrationUser extends User {
     private String email;
     private String telephone;
     private UserTypeEnum userType;
-
+    private String token;
 
     public IntegrationUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);

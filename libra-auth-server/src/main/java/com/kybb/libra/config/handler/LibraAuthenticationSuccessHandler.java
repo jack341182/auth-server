@@ -1,10 +1,14 @@
 package com.kybb.libra.config.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kybb.common.cloud.integration.IntegrationUser;
 import com.kybb.common.cloud.util.HttpUtil;
+import com.kybb.common.http.Body;
+import com.kybb.libra.feign.UserInfoFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -23,7 +27,6 @@ import java.io.IOException;
 /**
  * 认证成功后做的处理
  * ClassName: LibraAuthenticationSuccessHandler
- *
  */
 @Component
 @Slf4j
@@ -43,13 +46,14 @@ public class LibraAuthenticationSuccessHandler
     private PasswordEncoder encoder;
 
     @Autowired
+    private UserInfoFeignClient userFeignClient;
+    @Autowired
     private AuthorizationServerTokenServices authorizationServerTokenServices;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        logger.info("=======登录成功=========");
         //获取请求头里Authorization信息
         String header = request.getHeader("Authorization");
 
@@ -68,7 +72,6 @@ public class LibraAuthenticationSuccessHandler
          * 构造OAuth2Request 第二步，根据clientId 获取ClientDetails对象
          */
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
-
         if (clientDetails == null) {
             throw new UnapprovedClientAuthenticationException("clientId对应的配置信息不存在，clientId:" + clientId);
         } else if (!encoder.matches(clientSecret, clientDetails.getClientSecret())) {
@@ -81,7 +84,6 @@ public class LibraAuthenticationSuccessHandler
          * 我们这里已获取到了Authentication，弄个空的map就可
          */
         TokenRequest tokenRequest = new TokenRequest(MapUtils.EMPTY_SORTED_MAP, clientId, clientDetails.getScope(), "custom");
-
         /**
          * 构造OAuth2Request 第四步，创建 OAuth2Request
          */
@@ -94,10 +96,12 @@ public class LibraAuthenticationSuccessHandler
          * 构造OAuth2Request 第六步，authorizationServerTokenServices创建 OAuth2AccessToken
          */
         OAuth2AccessToken accessToken = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
-
-
+        IntegrationUser principal = (IntegrationUser) oAuth2Authentication.getPrincipal();
+        ResponseEntity<Body> bodyResponseEntity = userFeignClient.updateTokenByUserId(principal.getId(), accessToken.getValue());
         response.getWriter().write(objectMapper.writeValueAsString(accessToken));
 
+
+        response.flushBuffer();
     }
 
 

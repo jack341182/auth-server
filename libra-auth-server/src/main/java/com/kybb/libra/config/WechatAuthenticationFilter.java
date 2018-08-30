@@ -36,18 +36,14 @@ public class WechatAuthenticationFilter extends AbstractAuthenticationProcessing
             throw new AuthenticationServiceException(
                     "Authentication method not supported: " + request.getMethod());
         }
-        log.info("==============================微信小程序 授权处理  ===============");
         //获取 openId
         String openId = obtainOpenId(request);
-
         if (openId == null) {
             openId = "";
         }
-
         openId = AuthorizationServerConstants.WECHAT_PREFIX + openId.trim();
         //到这里认证还没通过，SmsCodeAuthenticationToken一个参数的构造，是没有认证通过的
         WechatAuthenticationToken authRequest = new WechatAuthenticationToken(openId);
-
         //把请求里一些信息如ip等set给SmsCodeAuthenticationToken，此时SmsCodeAuthenticationToken还没认证
         setDetails(request, authRequest);
 

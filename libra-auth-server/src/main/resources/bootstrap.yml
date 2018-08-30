@@ -4,9 +4,9 @@ spring:
       host: ${DS_SERVER_HOST:10.1.80.234}
 
 
-#feign:
-#  hystrix:
-#    enabled: false
+feign:
+  hystrix:
+    enabled: true
 management:
   endpoints:
     web:
@@ -15,3 +15,22 @@ management:
   endpoint:
     health:
       show-details: always
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+#  threadpool:
+#    default:
+#      coreSize: 50 #缺省为10
+#
+#ribbon:
+#  ReadTimeout: 30000
+#  ConnectTimeout: 30000
+#  MaxAutoRetries: 0
+#  MaxAutoRetriesNextServer: 1

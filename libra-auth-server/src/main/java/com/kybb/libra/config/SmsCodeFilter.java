@@ -63,7 +63,9 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
                 authenticationFailureHandler.onAuthenticationFailure(request, response, new AuthenticationServiceException("验证码错误"));
                 return;
             }
-            log.info(" =================验证码通过====================");
+            if (log.isDebugEnabled()) {
+                log.debug("=======验证码通过=====");
+            }
         }
         filterChain.doFilter(request, response);
     }
@@ -73,29 +75,27 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
         response.setContentType(ContentType.APPLICATION_JSON.toString());
         //没有client信息
         if (header == null || !header.startsWith("Basic ")) {
-            HttpUtil.writeResponse(objectMapper,"请求头没有client 信息", response);
+            HttpUtil.writeResponse(objectMapper, "请求头没有client 信息", response);
             return false;
         }
         if (loginMsg == null) {
-            HttpUtil.writeResponse(objectMapper,"缺少登录信息", response);
+            HttpUtil.writeResponse(objectMapper, "缺少登录信息", response);
             return false;
         }
         if (StringUtils.isEmpty(loginMsg.getDeviceId())) {
-            HttpUtil.writeResponse(objectMapper,"缺少deviceId", response);
+            HttpUtil.writeResponse(objectMapper, "缺少deviceId", response);
             return false;
         }
         if (StringUtils.isEmpty(loginMsg.getMobile())) {
-            HttpUtil.writeResponse(objectMapper,"mobile信息错误", response);
+            HttpUtil.writeResponse(objectMapper, "mobile信息错误", response);
             return false;
         }
         if (StringUtils.isEmpty(loginMsg.getSmsCode())) {
-            HttpUtil.writeResponse(objectMapper,"smsCode 为空", response);
+            HttpUtil.writeResponse(objectMapper, "smsCode 为空", response);
             return false;
         }
         return true;
     }
-
-
 
 
 }

@@ -40,7 +40,9 @@ public class WechatLoginFilter extends OncePerRequestFilter implements Initializ
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (antPathMatcher.match(WECHAT_LOGIN_URL, request.getRequestURI()) && request.getMethod().equalsIgnoreCase("post")) {
-            log.info("================微信小程序或者公众号登录拦截============");
+            if (log.isDebugEnabled()) {
+                log.debug("================微信小程序或者公众号登录拦截============");
+            }
             String header = request.getHeader("Authorization");
             response.setContentType(ContentType.APPLICATION_JSON.toString());
             //没有client信息
