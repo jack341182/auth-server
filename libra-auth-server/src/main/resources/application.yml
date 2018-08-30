@@ -17,7 +17,7 @@ spring:
   redis:
     host: ${REDIS_HOST:10.1.10.239}
     database: ${REDIS_DATABASE:3}
-#logging:
-#  level:
-#    org.springframework.security: debug
+logging:
+  level:
+    org.springframework.security: debug
 #    org.springframework.security.web: debug

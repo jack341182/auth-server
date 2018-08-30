@@ -24,8 +24,8 @@ public class EncryptController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/code")
-    public ResponseEntity<Body<String>> encrypt(@RequestParam("input") String input) {
-        return ResponseUtil.ok(passwordEncoder.encode(input));
+    public String encrypt(@RequestParam("input") String input) {
+        return passwordEncoder.encode(input);
     }
 
 

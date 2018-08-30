@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.kybb.common.cloud.constants.AuthorizationServerConstants.URL_SPLIT;
 
@@ -67,7 +68,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public IntegrationUser loadUserByUsername(String username) throws UsernameNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {//已经授权
+        if (authentication != null && authentication.isAuthenticated() && isRefreshTokenRequest(request)) {//已经授权
             String refresh_token = request.getParameter("refresh_token");
             OAuth2Authentication oAuth2RefreshToken = tokenStore.readAuthenticationForRefreshToken(tokenStore.readRefreshToken(refresh_token));
             Authentication token = oAuth2RefreshToken.getUserAuthentication();
@@ -76,10 +77,12 @@ public class CustomUserDetailService implements UserDetailsService {
         AccountRequest a = new AccountRequest();
         if (username.startsWith(AuthorizationServerConstants.WECHAT_PREFIX)) {
             a.setWxOpenId(username.replace(AuthorizationServerConstants.WECHAT_PREFIX, ""));
-        }
-        if (username.startsWith(AuthorizationServerConstants.SMS_CODE_PREFIX)) {
+        } else if (username.startsWith(AuthorizationServerConstants.SMS_CODE_PREFIX)) {
             a.setTelephone(username.replace(AuthorizationServerConstants.SMS_CODE_PREFIX, ""));
+        } else {
+            a.setUsername(username);
         }
+
         String header = request.getHeader("Authorization");
         try {
             String[] tokens = HttpUtil.extractAndDecodeHeader(header, request);
@@ -92,6 +95,9 @@ public class CustomUserDetailService implements UserDetailsService {
         ResponseEntity<Body<AccountVO>> responseEntity = userFeignClient.accounts(a);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             AccountVO accountVO = responseEntity.getBody().getData();
+            if (Objects.isNull(accountVO)) {
+                throw new UsernameNotFoundException("用户名不存在");
+            }
             List<GrantedAuthority> authorities = new ArrayList<>();
             List<Long> idList = accountVO.getRoleIds();
             ResponseEntity<Body<List<ModuleVO>>> bodyResponseEntity = null;
