@@ -20,4 +20,5 @@ spring:
 logging:
   level:
     org.springframework.security: info
+    com.kybb: debug
 #    org.springframework.security.web: debug
