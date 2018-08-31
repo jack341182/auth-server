@@ -19,5 +19,5 @@ spring:
     database: ${REDIS_DATABASE:3}
 logging:
   level:
-    org.springframework.security: debug
+    org.springframework.security: info
 #    org.springframework.security.web: debug
