@@ -48,7 +48,7 @@ public class SmsController {
             return ResponseUtil.badRequest("参数错误。deviceId为空");
         }
         SmsCodeStatus smsCodeStatus = smsCodeService.saveAndSendCode(smsCodeRequest);
-        return smsCodeStatus.isSuccess() ? ResponseUtil.ok(null, smsCodeStatus.getMessage()) : ResponseUtil.notAcceptable(smsCodeStatus.getMessage());
+        return smsCodeStatus.isSuccess() ? ResponseUtil.ok(smsCodeStatus.getCode(), smsCodeStatus.getMessage()) : ResponseUtil.notAcceptable(smsCodeStatus.getMessage());
     }
 
     @GetMapping("/test")

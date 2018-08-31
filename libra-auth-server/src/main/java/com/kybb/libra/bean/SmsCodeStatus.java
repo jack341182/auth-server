@@ -12,4 +12,6 @@ public class SmsCodeStatus implements Serializable {
     private boolean success;
 
     private String message;
+
+    private String code;
 }

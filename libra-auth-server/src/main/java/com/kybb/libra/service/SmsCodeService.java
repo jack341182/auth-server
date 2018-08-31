@@ -67,6 +67,7 @@ public class SmsCodeService {
                 }
                 return SmsCodeStatus.builder()
                         .success(true)
+                        .code(code)
                         .message("验证码发送成功")
                         .build();
             }
