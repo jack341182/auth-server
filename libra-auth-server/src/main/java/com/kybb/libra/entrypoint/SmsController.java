@@ -1,9 +1,11 @@
 package com.kybb.libra.entrypoint;
 
+import com.kybb.common.cloud.integration.SmsCodeLogin;
 import com.kybb.common.cloud.integration.SmsCodeRequest;
 import com.kybb.common.http.Body;
 import com.kybb.common.http.ResponseUtil;
 
+import com.kybb.libra.bean.SmsCodeStatus;
 import com.kybb.libra.feign.UserInfoFeignClient;
 import com.kybb.libra.service.SmsCodeService;
 import com.kybb.solar.user.vo.UserInfoVO;
@@ -31,7 +33,6 @@ public class SmsController {
     private UserInfoFeignClient userFeignClient;
 
 
-
     /**
      * 发送短信验证码
      *
@@ -39,15 +40,15 @@ public class SmsController {
      * @return
      */
     @PostMapping("/code")
-    public ResponseEntity addCode(@RequestBody SmsCodeRequest smsCodeRequest) {
-
+    public ResponseEntity addCode(@RequestBody SmsCodeLogin smsCodeRequest) {
         if (StringUtils.isEmpty(smsCodeRequest.getMobile())) {
             return ResponseUtil.badRequest("参数错误。mobile为空");
         }
         if (StringUtils.isEmpty(smsCodeRequest.getDeviceId())) {
             return ResponseUtil.badRequest("参数错误。deviceId为空");
         }
-        return ResponseUtil.ok(smsCodeService.saveAndSendCode(smsCodeRequest));
+        SmsCodeStatus smsCodeStatus = smsCodeService.saveAndSendCode(smsCodeRequest);
+        return smsCodeStatus.isSuccess() ? ResponseUtil.ok(null, smsCodeStatus.getMessage()) : ResponseUtil.notAcceptable(smsCodeStatus.getMessage());
     }
 
     @GetMapping("/test")

@@ -2,9 +2,11 @@ package com.kybb.libra.service;
 
 import com.kybb.common.cloud.integration.SmsCodeLogin;
 import com.kybb.common.cloud.integration.SmsCodeRequest;
+import com.kybb.libra.bean.SmsCodeStatus;
 import com.kybb.libra.feign.MessageFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,10 +35,10 @@ public class SmsCodeService {
     /**
      * 校验是否存在，存在则不返回
      *
-     * @param smsCodeRequest
+     * @param smsCodeLogin
      * @return
      */
-    public String saveAndSendCode(SmsCodeRequest smsCodeRequest) {
+    public SmsCodeStatus saveAndSendCode(SmsCodeLogin smsCodeLogin) {
         // TODO: 2018/8/22  发送短信
 //        ResponseEntity<Body<SmsCaptchaVO>> bodyResponseEntity = messageFeignClient.sendCaptcha(MessageRequest.builder()
 //                .mobile(smsCodeRequest.getMobile())
@@ -47,16 +49,24 @@ public class SmsCodeService {
 //            SmsCaptchaVO code = bodyResponseEntity.getBody().getData();
 //
 //        }
-        String code = "123456";
-        String md5Hex = DigestUtils.md5Hex(code);
-        String encode = passwordEncoder.encode(md5Hex);
-        redisTemplate.opsForValue().set(SMS_CODE_PREFIX + smsCodeRequest.getMobile() + smsCodeRequest.getDeviceId(),
-                encode, 10, TimeUnit.MINUTES);
-        return code;
-//        if (log.isDebugEnabled()) {
-//            log.debug("message service status code" + bodyResponseEntity.getStatusCode() + " , message: " + bodyResponseEntity.getBody().getMessage());
-//        }
-//        throw new ServiceException("短信发送失败,请稍后重试");
+        // TODO: 2018/8/31 检查缓存的验证码
+        String cacheCode = getCode(smsCodeLogin);
+        if(StringUtils.isEmpty(cacheCode)){
+            String code = "123456";
+            String md5Hex = DigestUtils.md5Hex(code);
+            String encode = passwordEncoder.encode(md5Hex);
+            redisTemplate.opsForValue().set(SMS_CODE_PREFIX + smsCodeLogin.getMobile() + smsCodeLogin.getDeviceId(),
+                    encode, 10, TimeUnit.MINUTES);
+            return SmsCodeStatus.builder()
+                    .success(true)
+                    .message("验证码发送成功")
+                    .build();
+        }else {
+            return SmsCodeStatus.builder()
+                    .success(false)
+                    .message("验证码未失效，请检查手机短信")
+                    .build();
+        }
     }
 
     public String encode(String raw) {
