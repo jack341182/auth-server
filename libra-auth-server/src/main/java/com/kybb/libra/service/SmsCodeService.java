@@ -49,15 +49,16 @@ public class SmsCodeService {
         // 检查缓存的验证码
         String cacheCode = getCode(smsCodeLogin);
         if (StringUtils.isEmpty(cacheCode)) {
-            //  发送短信
-            ResponseEntity<Body<SmsCaptchaVO>> bodyResponseEntity = messageFeignClient.sendCaptcha(MessageRequest.builder()
-                    .mobile(smsCodeLogin.getMobile())
-                    .business(MessageBusinessEnum.LOGIN_CAPTCHA)
-                    .build());
-            if (bodyResponseEntity.getStatusCode().value() >= HttpStatus.OK.value() && bodyResponseEntity.getStatusCode().value() < 300) {
+            //TODO   发送短信
+//            ResponseEntity<Body<SmsCaptchaVO>> bodyResponseEntity = messageFeignClient.sendCaptcha(MessageRequest.builder()
+//                    .mobile(smsCodeLogin.getMobile())
+//                    .business(MessageBusinessEnum.LOGIN_CAPTCHA)
+//                    .build());
+//            if (bodyResponseEntity.getStatusCode().value() >= HttpStatus.OK.value() && bodyResponseEntity.getStatusCode().value() < 300) {
 
-                SmsCaptchaVO captchaVO = bodyResponseEntity.getBody().getData();
-                String code = captchaVO.getValidateCode();
+//                SmsCaptchaVO captchaVO = bodyResponseEntity.getBody().getData();
+//                String code = captchaVO.getValidateCode();
+                String code = "123456";
                 String md5Hex = DigestUtils.md5Hex(code);
                 String encode = passwordEncoder.encode(md5Hex);
                 redisTemplate.opsForValue().set(SMS_CODE_PREFIX + smsCodeLogin.getMobile() + smsCodeLogin.getDeviceId(),
@@ -70,11 +71,11 @@ public class SmsCodeService {
                         .code(code)
                         .message("验证码发送成功")
                         .build();
-            }
-            return SmsCodeStatus.builder()
-                    .success(false)
-                    .message(bodyResponseEntity.getBody().getMessage())
-                    .build();
+//            }
+//            return SmsCodeStatus.builder()
+//                    .success(false)
+//                    .message(bodyResponseEntity.getBody().getMessage())
+//                    .build();
         } else {
             return SmsCodeStatus.builder()
                     .success(false)
