@@ -26,13 +26,21 @@ public class IntegrationUser extends User implements Serializable {
     private UserTypeEnum userType;
     private String token;
 
+
+    private String appType;
+
     public IntegrationUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
     }
 
-    public IntegrationUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public IntegrationUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, Long id, String wxOpenId, String email, String telephone, UserTypeEnum userType, String token, String appType) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+        this.id = id;
+        this.wxOpenId = wxOpenId;
+        this.email = email;
+        this.telephone = telephone;
+        this.userType = userType;
+        this.token = token;
+        this.appType = appType;
     }
-
-
 }

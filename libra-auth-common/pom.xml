@@ -46,12 +46,14 @@
 
     <distributionManagement>
         <repository>
-            <id>zcckj_releases</id>
-            <url>http://10.1.10.240:8081/nexus/content/repositories/zcckj_releases</url>
+            <id>nexus</id>
+            <name>Nexus central</name>
+            <url>http://10.1.80.166:8083/repository/maven-central/</url>
         </repository>
         <snapshotRepository>
-            <id>zcckj_snapshots</id>
-            <url>http://10.1.10.240:8081/nexus/content/repositories/zcckj_snapshots</url>
+            <id>nexus</id>
+            <name>Nexus Snapshot</name>
+            <url>http://10.1.80.166:8083/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
     <dependencyManagement>

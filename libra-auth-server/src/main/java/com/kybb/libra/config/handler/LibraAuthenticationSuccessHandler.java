@@ -56,8 +56,6 @@ public class LibraAuthenticationSuccessHandler
 
         //获取请求头里Authorization信息
         String header = request.getHeader("Authorization");
-
-
         /**
          * 构造OAuth2Request 第一步，从请求头获取clientId
          */
@@ -97,10 +95,8 @@ public class LibraAuthenticationSuccessHandler
          */
         OAuth2AccessToken accessToken = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
         IntegrationUser principal = (IntegrationUser) oAuth2Authentication.getPrincipal();
-        ResponseEntity<Body> bodyResponseEntity = userFeignClient.updateTokenByUserId(principal.getId(), accessToken.getValue());
+        userFeignClient.updateTokenByUserId(principal.getId(), accessToken.getValue());
         response.getWriter().write(objectMapper.writeValueAsString(accessToken));
-
-
         response.flushBuffer();
     }
 

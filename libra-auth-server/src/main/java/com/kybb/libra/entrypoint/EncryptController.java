@@ -29,6 +29,8 @@ public class EncryptController {
     }
 
 
+
+
 //    public static void main(String[] args) {
 //        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 //        String raw = "b8a5d79fdffc7766c64735288beb064b";

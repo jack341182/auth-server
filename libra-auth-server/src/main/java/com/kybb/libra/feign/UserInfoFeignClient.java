@@ -8,6 +8,7 @@ import com.kybb.solar.user.vo.UserInfoVO;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -21,8 +22,9 @@ import java.util.List;
         fallbackFactory = UserInfoFeignClientFallbackFactory.class
 )
 public interface UserInfoFeignClient {
+
     @PostMapping({"/users/unique"})
-    ResponseEntity<Body<AccountVO>> accounts(@RequestBody AccountRequest var1);
+    ResponseEntity<Body<AccountVO>> accounts(@RequestBody AccountRequest accountRequest);
 
     @GetMapping({"/users/user-info"})
     ResponseEntity<Body<List<UserInfoVO>>> getUserInfo(@RequestParam("ids") List<Long> var1);

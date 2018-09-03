@@ -17,9 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -67,12 +69,20 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public IntegrationUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && isRefreshTokenRequest(request)) {//已经授权
             String refresh_token = request.getParameter("refresh_token");
-            OAuth2Authentication oAuth2RefreshToken = tokenStore.readAuthenticationForRefreshToken(tokenStore.readRefreshToken(refresh_token));
-            Authentication token = oAuth2RefreshToken.getUserAuthentication();
-            return (IntegrationUser) token.getPrincipal();
+            OAuth2Authentication oAuth2Authentication = tokenStore.readAuthenticationForRefreshToken(tokenStore.readRefreshToken(refresh_token));
+            IntegrationUser principal = (IntegrationUser) oAuth2Authentication.getPrincipal();
+            AccountRequest a = new AccountRequest();
+            a.setUserId(principal.getId());
+            a.setAppType(ApplicationTypeEnum.valueOf(principal.getAppType()));
+            principal = getUser(a);//重新获取用户信息。
+            OAuth2Authentication auth2Authentication = new OAuth2Authentication(oAuth2Authentication.getOAuth2Request(), new UsernamePasswordAuthenticationToken(principal, authentication.getCredentials(), authentication.getAuthorities()));
+//            tokenStore.storeAccessToken(oAuth2RefreshToken);
+            context.setAuthentication(auth2Authentication);
+            return principal;
         }
         AccountRequest a = new AccountRequest();
         if (username.startsWith(AuthorizationServerConstants.WECHAT_PREFIX)) {
@@ -92,11 +102,15 @@ public class CustomUserDetailService implements UserDetailsService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ResponseEntity<Body<AccountVO>> responseEntity = userFeignClient.accounts(a);
+        return getUser(a);
+    }
+
+    private IntegrationUser getUser(AccountRequest accountRequest) {
+        ResponseEntity<Body<AccountVO>> responseEntity = userFeignClient.accounts(accountRequest);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             AccountVO accountVO = responseEntity.getBody().getData();
             if (Objects.isNull(accountVO)) {
-                throw new UsernameNotFoundException("用户名不存在");
+                throw new UsernameNotFoundException("用户不存在");
             }
             List<GrantedAuthority> authorities = new ArrayList<>();
             List<Long> idList = accountVO.getRoleIds();
@@ -130,11 +144,13 @@ public class CustomUserDetailService implements UserDetailsService {
             integrationUser.setId(accountVO.getId());
             integrationUser.setWxOpenId(accountVO.getWxOpenId());
             integrationUser.setUserType(accountVO.getUserType());
+            integrationUser.setAppType(accountRequest.getAppType().name());
             return integrationUser;
         } else {
             log.error("服务器异常=== user-center-api");
-            throw new InternalAuthenticationServiceException("服务器异常。user-center-api");
+            throw new InternalAuthenticationServiceException("服务异常。user-center-api");
         }
+
     }
 
     private boolean isRefreshTokenRequest(HttpServletRequest request) {

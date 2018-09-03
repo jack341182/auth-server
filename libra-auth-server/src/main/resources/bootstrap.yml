@@ -2,7 +2,11 @@ spring:
   cloud:
     consul:
       host: ${DS_SERVER_HOST:10.1.80.234}
-
+      ## 解决第一次调用不到服务的情况
+      ribbon:
+        enabled: true
+      discovery:
+        query-passing: true
 
 feign:
   hystrix:
@@ -29,8 +33,8 @@ hystrix:
 #    default:
 #      coreSize: 50 #缺省为10
 #
-#ribbon:
-#  ReadTimeout: 30000
-#  ConnectTimeout: 30000
-#  MaxAutoRetries: 0
-#  MaxAutoRetriesNextServer: 1
+ribbon:
+  ReadTimeout: 30000
+  ConnectTimeout: 30000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1

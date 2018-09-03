@@ -21,4 +21,14 @@ public class AuthorizationController {
         log.info("=====>清除 token  "  +token);
         return ResponseEntity.ok(b);
     }
+
+    @PutMapping("/token")
+    public void updateAuthenticationByToken(@RequestParam("token") String token){
+
+    }
+    @PutMapping("/auth/user/{id}")
+    public void updateAuthenticationByUserId(@PathVariable("id") long token){
+
+    }
+
 }
