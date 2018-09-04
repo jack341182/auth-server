@@ -78,7 +78,7 @@ public class LibraAuthenticationSuccessHandler
 
         /**
          * 构造OAuth2Request 第三步，new TokenRequest
-         * 第一个参数是个map，放的是每个授权模式特有的参数，springsecurity会根据这些参数构建Authentication
+         * 第一个参数是个map，放的是每个授权模式特有的参数，spring-security会根据这些参数构建Authentication
          * 我们这里已获取到了Authentication，弄个空的map就可
          */
         TokenRequest tokenRequest = new TokenRequest(MapUtils.EMPTY_SORTED_MAP, clientId, clientDetails.getScope(), "custom");

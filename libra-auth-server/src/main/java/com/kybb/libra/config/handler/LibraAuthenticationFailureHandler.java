@@ -23,6 +23,7 @@ public class LibraAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
 
+
         response.setContentType("application/json;charset=utf-8");
         ObjectMapper objectMapper = new ObjectMapper();
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

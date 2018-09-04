@@ -3,6 +3,7 @@ package com.kybb.libra.config.auth;
 import com.kybb.libra.config.IntegrationAuthenticationSecurityConfig;
 import com.kybb.libra.config.SmsCodeFilter;
 import com.kybb.libra.config.WechatLoginFilter;
+import com.kybb.libra.config.handler.IntegrationAccessDenyHandler;
 import com.kybb.libra.service.SmsCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableResourceServer
 public class AuthResourceConfig extends ResourceServerConfigurerAdapter {
     @Autowired
-    IntegrationAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
+    IntegrationAuthenticationSecurityConfig integrationAuthenticationSecurityConfig;
 
     //自定义的登录成功后的处理器
     @Autowired
@@ -34,6 +35,9 @@ public class AuthResourceConfig extends ResourceServerConfigurerAdapter {
 
     @Autowired
     private SmsCodeService smsCodeService;
+
+    private IntegrationAccessDenyHandler accessDenyHandler;
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         SmsCodeFilter filter = new SmsCodeFilter(smsCodeService, authenticationFailureHandler);
@@ -46,11 +50,12 @@ public class AuthResourceConfig extends ResourceServerConfigurerAdapter {
                 .failureHandler(authenticationFailureHandler) //登录失败后的处理
                 .and()
                 .authorizeRequests()
-                .antMatchers("/token/evict","/sms/code","/sms/test","/oauth/check_token","/actuator/**","/encryption/code").permitAll()
+                .antMatchers("/token/evict", "/sms/code",  "/oauth/check_token", "/actuator/**", "/encryption/code").permitAll()
+                .and()
+                .exceptionHandling().accessDeniedHandler(accessDenyHandler)
                 .and().csrf().disable()
-                .apply(smsCodeAuthenticationSecurityConfig);
+                .apply(integrationAuthenticationSecurityConfig);
     }
-
 
 
 }

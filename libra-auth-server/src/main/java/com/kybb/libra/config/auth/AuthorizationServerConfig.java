@@ -1,6 +1,7 @@
 package com.kybb.libra.config.auth;
 
 import com.kybb.libra.config.enhancer.JwtTokenEnhancer;
+import com.kybb.libra.config.handler.IntegrationExceptionTranslator;
 import com.kybb.libra.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -55,12 +56,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private CustomUserDetailService userDetailsService;
 
     @Autowired
+    private IntegrationExceptionTranslator integrationExceptionTranslator;
+
+    @Autowired
     JwtTokenEnhancer enhancer;
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         //拿到增强器链
         TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
-
         List<TokenEnhancer> enhancers = new ArrayList<TokenEnhancer>();
 //        enhancers.add(jwtAccessTokenConverter());
         enhancers.add(enhancer);
@@ -70,7 +73,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
         endpoints.tokenEnhancer(enhancerChain);
-
+        endpoints.exceptionTranslator(integrationExceptionTranslator);
     }
 
     @Override
