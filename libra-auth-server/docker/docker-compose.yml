@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   libra-auth-server:
     image: libra-auth-server
@@ -12,7 +12,6 @@ services:
       REDIS_DATABASE: 3
     container_name: libra-auth-server
     mem_limit: 800m
-    hostname: auth-server
 networks:
   default:
     external:

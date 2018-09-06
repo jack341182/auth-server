@@ -1,16 +1,27 @@
 package com.kybb.libra.config;
 
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kybb.common.cloud.constants.AuthorizationServerConstants;
 import com.kybb.common.cloud.token.WechatAuthenticationToken;
+import com.kybb.common.cloud.util.HttpUtil;
+import com.kybb.libra.properties.WechatProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import static com.kybb.common.cloud.constants.AuthorizationServerConstants.WECHAT_LOGIN_URL;
 
@@ -19,15 +30,21 @@ import static com.kybb.common.cloud.constants.AuthorizationServerConstants.WECHA
  * ClassName: SmsCodeAuthenticationFilter
  */
 @Slf4j
+
 public class WechatAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+
+    private final WechatProperties wechatProperties;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
 
     private boolean postOnly = true;//只处理post请求
 
 
-    public WechatAuthenticationFilter() {
+    public WechatAuthenticationFilter(WechatProperties wechatProperties) {
         //过滤的请求url，登录表单的url
         super(new AntPathRequestMatcher(WECHAT_LOGIN_URL, "POST"));
+        this.wechatProperties = wechatProperties;
+
     }
 
     public Authentication attemptAuthentication(HttpServletRequest request,
@@ -36,14 +53,28 @@ public class WechatAuthenticationFilter extends AbstractAuthenticationProcessing
             throw new AuthenticationServiceException(
                     "Authentication method not supported: " + request.getMethod());
         }
-        //获取 openId
-        String openId = obtainOpenId(request);
-        if (openId == null) {
-            openId = "";
+
+        //获取 wxLoginCode
+        String wxLoginCode = obtainWxLoginCode(request);
+
+        log.info("login code ====" + wxLoginCode);
+        // TODO: 2018/9/6  获取openid
+        String header = request.getHeader("Authorization");
+        /**
+         * 构造OAuth2Request 第一步，从请求头获取clientId
+         */
+        //base64解码获取clientId、clientSecret
+        String[] tokens = HttpUtil.extractAndDecodeHeader(header, request);
+        assert tokens.length == 2;
+        String clientId = tokens[0];
+        String openId = this.getOpenId(clientId, wxLoginCode);
+        if (StringUtils.isEmpty(openId)) {
+            HttpUtil.writeResponse(objectMapper, "非法请求", response, HttpStatus.NOT_ACCEPTABLE);
+            return null;
         }
-        openId = AuthorizationServerConstants.WECHAT_PREFIX + openId.trim();
         //到这里认证还没通过，SmsCodeAuthenticationToken一个参数的构造，是没有认证通过的
-        WechatAuthenticationToken authRequest = new WechatAuthenticationToken(openId);
+        WechatAuthenticationToken authRequest = new WechatAuthenticationToken(
+                AuthorizationServerConstants.WECHAT_PREFIX + openId.trim());
         //把请求里一些信息如ip等set给SmsCodeAuthenticationToken，此时SmsCodeAuthenticationToken还没认证
         setDetails(request, authRequest);
 
@@ -54,10 +85,26 @@ public class WechatAuthenticationFilter extends AbstractAuthenticationProcessing
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 
+    private String getOpenId(String clientId, String wxLoginCode) {
+        if (clientId.equalsIgnoreCase("trucker")) {
+            RestTemplate restTemplate = new RestTemplate();
+            Map<String, Object> params = new HashMap<>();
+            params.put("appid", wechatProperties.getTrucker().getAppId());
+            params.put("secret", wechatProperties.getTrucker().getAppSecret());
+            params.put("js_code", wxLoginCode);
+            params.put("grant_type", "authorization_code");
+            String forObject = restTemplate.getForObject(wechatProperties.getGetOpenIdUrl(), String.class, params);
+            JSONObject jsonObject = JSONObject.parseObject(forObject);
+            log.info(jsonObject.toJSONString());
+            return jsonObject.getString("openid");
+        }
+        return null;
+    }
+
     /**
      * 获取手机号
      */
-    private String obtainOpenId(HttpServletRequest request) {
+    private String obtainWxLoginCode(HttpServletRequest request) {
         return request.getParameter(AuthorizationServerConstants.WECHAT_LOGIN_URL_PARAME);
     }
 

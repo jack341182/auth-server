@@ -50,8 +50,9 @@ public class WechatLoginFilter extends OncePerRequestFilter implements Initializ
                 HttpUtil.writeResponse(objectMapper, "请求头没有client 信息", response);
                 return;
             }
+
             if (StringUtils.isEmpty(request.getParameter(AuthorizationServerConstants.WECHAT_LOGIN_URL_PARAME))) {
-                HttpUtil.writeResponse(objectMapper, "wxOpenId 为空", response);
+                HttpUtil.writeResponse(objectMapper, AuthorizationServerConstants.WECHAT_LOGIN_URL_PARAME+" 为空", response);
                 return;
             }
         }

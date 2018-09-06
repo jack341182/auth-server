@@ -17,6 +17,11 @@ spring:
   redis:
     host: ${REDIS_HOST:10.1.10.239}
     database: ${REDIS_DATABASE:3}
+  wechat:
+    trucker:
+      app-id: ${TRUCKER_APP_ID:wx3c6860f872cb2cfc}
+      app-secret: ${TRUCKER_APP_SECRET:0acd1a92aee027749eff19d953aee562}
+
 logging:
   level:
     org.springframework.security: info

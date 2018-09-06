@@ -1,7 +1,9 @@
 package com.kybb.libra.config;
 
+import com.kybb.libra.properties.WechatProperties;
 import com.kybb.libra.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,12 +12,14 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 短信验证码配置
  * ClassName: SmsCodeAuthenticationSecurityConfig 
  */
 @Component
+@EnableConfigurationProperties(value = {WechatProperties.class})
 public class IntegrationAuthenticationSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
 	@Autowired
@@ -26,7 +30,10 @@ public class IntegrationAuthenticationSecurityConfig extends SecurityConfigurerA
 
 	@Autowired
 	private CustomUserDetailService userDetailsService;
-	
+
+
+	@Autowired
+	private WechatProperties wechatProperties;
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		//1，配置短信验证码过滤器
@@ -45,7 +52,7 @@ public class IntegrationAuthenticationSecurityConfig extends SecurityConfigurerA
 
 
 		//微信
-		WechatAuthenticationFilter wechatAuthenticationFilter = new WechatAuthenticationFilter();
+		WechatAuthenticationFilter wechatAuthenticationFilter = new WechatAuthenticationFilter(wechatProperties);
 		wechatAuthenticationFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
 		//设置认证失败成功处理器
 		wechatAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);

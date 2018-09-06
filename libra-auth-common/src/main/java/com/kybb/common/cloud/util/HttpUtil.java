@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @Auther: vicykie
@@ -26,32 +28,23 @@ public class HttpUtil {
      * @throws BadCredentialsException if the Basic header is not present or is not valid
      *                                 Base64
      */
-    public static String[] extractAndDecodeHeader(String header, HttpServletRequest request)
-            throws IOException {
-        //Basic aW1vb2M6aW1vb2NzZWNyZXQ= 截取Basic后的
-        byte[] base64Token = header.substring(6).getBytes("UTF-8");
-        byte[] decoded;
+    public static String[] extractAndDecodeHeader(String header, HttpServletRequest request) {
         try {
+            //Basic aW1vb2M6aW1vb2NzZWNyZXQ= 截取Basic后的
+            byte[] base64Token = header.substring(6).getBytes(StandardCharsets.UTF_8);
             //解码后格式   用户名:密码
-            decoded = Base64.decode(base64Token);
+            byte[] decoded = Base64.decode(base64Token);
+            String token = new String(decoded, StandardCharsets.UTF_8);
+            int delim = token.indexOf(":");
+            if (delim == -1) {
+                throw new BadCredentialsException("Invalid basic authentication token");
+            }
+            return new String[]{token.substring(0, delim), token.substring(delim + 1)};
         } catch (IllegalArgumentException e) {
             throw new BadCredentialsException(
                     "Failed to decode basic authentication token");
         }
 
-        String token = new String(decoded, "UTF-8");
-
-        int delim = token.indexOf(":");
-
-        if (delim == -1) {
-            throw new BadCredentialsException("Invalid basic authentication token");
-        }
-        //返回的数组是   [用户名(就是client_id),clientSecret] 其实就是配置的
-        /**
-         * security.oauth2.client.clientId = imooc
-         security.oauth2.client.clientSecret = imoocsecret
-         */
-        return new String[]{token.substring(0, delim), token.substring(delim + 1)};
     }
 
 
@@ -65,10 +58,14 @@ public class HttpUtil {
 
 
     public static void writeResponse(ObjectMapper objectMapper, String message, HttpServletResponse response) {
+       writeResponse(objectMapper,message,response,HttpStatus.BAD_REQUEST);
+    }
+
+    public static void writeResponse(ObjectMapper objectMapper, String message, HttpServletResponse response,HttpStatus status) {
         try {
             PrintWriter writer = response.getWriter();
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            writer.write(objectMapper.writeValueAsString(Body.builder().status(HttpStatus.BAD_REQUEST.value()).message(message).build()));
+            response.setStatus(status.value());
+            writer.write(objectMapper.writeValueAsString(Body.builder().status(status.value()).message(message).build()));
             writer.flush();
             writer.close();
         } catch (IOException e) {

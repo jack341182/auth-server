@@ -17,7 +17,8 @@ public class AuthorizationServerConstants {
      * 小程序/公众号
      */
     public static final String WECHAT_LOGIN_URL = "/auth/wechat";
-    public static final String WECHAT_LOGIN_URL_PARAME = "wxOpenId";
+    public static final String WECHAT_LOGIN_URL_PARAME = "wxLoginCode";
+
     public static final String WECHAT_PREFIX = "@_WECHAT_@";
 
 

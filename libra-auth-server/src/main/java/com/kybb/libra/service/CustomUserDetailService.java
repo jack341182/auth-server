@@ -94,14 +94,11 @@ public class CustomUserDetailService implements UserDetailsService {
         }
 
         String header = request.getHeader("Authorization");
-        try {
-            String[] tokens = HttpUtil.extractAndDecodeHeader(header, request);
-            assert tokens.length == 2;
-            String clientId = tokens[0];
-            a.setAppType(ApplicationTypeEnum.valueOf(clientId));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        String[] tokens = HttpUtil.extractAndDecodeHeader(header, request);
+        assert tokens.length == 2;
+        String clientId = tokens[0];
+        a.setAppType(ApplicationTypeEnum.valueOf(clientId));
         return getUser(a);
     }
 
