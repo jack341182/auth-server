@@ -112,6 +112,10 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private IntegrationUser getUser(AccountRequest accountRequest) {
         ResponseEntity<Body<AccountVO>> responseEntity = userFeignClient.accounts(accountRequest);
+        if (log.isDebugEnabled()) {
+            log.debug("-=====》 h获取用户信息  accountRequest is " + accountRequest);
+
+        }
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             AccountVO accountVO = responseEntity.getBody().getData();
             if (Objects.isNull(accountVO)) {
