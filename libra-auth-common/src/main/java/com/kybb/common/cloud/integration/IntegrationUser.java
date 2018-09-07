@@ -43,4 +43,18 @@ public class IntegrationUser extends User implements Serializable {
         this.token = token;
         this.appType = appType;
     }
+
+    @Override
+    public String toString() {
+        return "IntegrationUser{" +
+                "id=" + id +
+                ", wxOpenId='" + wxOpenId + '\'' +
+                ", email='" + email + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", userType=" + userType +
+                ", token='" + token + '\'' +
+                ", appType='" + appType + '\'' +
+                ", super="+ super.toString()+'\''+
+                '}';
+    }
 }
