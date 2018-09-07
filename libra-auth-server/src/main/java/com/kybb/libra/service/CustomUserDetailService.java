@@ -79,6 +79,9 @@ public class CustomUserDetailService implements UserDetailsService {
             String refresh_token = request.getParameter("refresh_token");
             OAuth2Authentication oAuth2Authentication = tokenStore.readAuthenticationForRefreshToken(tokenStore.readRefreshToken(refresh_token));
             IntegrationUser principal = (IntegrationUser) oAuth2Authentication.getPrincipal();
+            if (log.isDebugEnabled()) {
+                log.debug("【before】 refresh token principal is " + principal.toString());
+            }
             AccountRequest a = new AccountRequest();
             a.setUserId(principal.getId());
             a.setAppType(ApplicationTypeEnum.valueOf(principal.getAppType()));
@@ -86,6 +89,9 @@ public class CustomUserDetailService implements UserDetailsService {
             OAuth2Authentication auth2Authentication = new OAuth2Authentication(oAuth2Authentication.getOAuth2Request(), new UsernamePasswordAuthenticationToken(principal, authentication.getCredentials(), authentication.getAuthorities()));
 //            tokenStore.storeAccessToken(oAuth2RefreshToken);
             context.setAuthentication(auth2Authentication);
+            if (log.isDebugEnabled()) {
+                log.debug("【after】 refresh token principal is " + principal.toString());
+            }
             return principal;
         }
         AccountRequest a = new AccountRequest();
