@@ -69,6 +69,10 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public IntegrationUser loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (log.isDebugEnabled()) {
+            log.debug(" request is  refesh token ? " + isRefreshTokenRequest(request));
+            log.debug("=====登录用户=== " + username);
+        }
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && isRefreshTokenRequest(request)) {//已经授权
@@ -92,9 +96,7 @@ public class CustomUserDetailService implements UserDetailsService {
         } else {
             a.setUsername(username);
         }
-
         String header = request.getHeader("Authorization");
-
         String[] tokens = HttpUtil.extractAndDecodeHeader(header, request);
         assert tokens.length == 2;
         String clientId = tokens[0];

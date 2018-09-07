@@ -36,8 +36,8 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
     //需要拦截的url集合
     private Set<String> urls = new HashSet<>();
     //spring工具类
-    private AntPathMatcher antPathMatcher = new AntPathMatcher();
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final SmsCodeService smsCodeService;
     //认证失败处理器
     private final AuthenticationFailureHandler authenticationFailureHandler;

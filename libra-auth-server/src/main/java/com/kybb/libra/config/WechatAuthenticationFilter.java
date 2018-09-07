@@ -34,7 +34,8 @@ import static com.kybb.common.cloud.constants.AuthorizationServerConstants.WECHA
 public class WechatAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private final WechatProperties wechatProperties;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final RestTemplate restTemplate = new RestTemplate();
 
 
     private boolean postOnly = true;//只处理post请求
@@ -87,7 +88,6 @@ public class WechatAuthenticationFilter extends AbstractAuthenticationProcessing
 
     private String getOpenId(String clientId, String wxLoginCode) {
         if (clientId.equalsIgnoreCase("trucker")) {
-            RestTemplate restTemplate = new RestTemplate();
             Map<String, Object> params = new HashMap<>();
             params.put("appid", wechatProperties.getTrucker().getAppId());
             params.put("secret", wechatProperties.getTrucker().getAppSecret());
