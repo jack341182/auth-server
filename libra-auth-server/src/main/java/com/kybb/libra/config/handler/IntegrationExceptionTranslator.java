@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class IntegrationExceptionTranslator<E extends OAuth2Exception> extends DefaultWebResponseExceptionTranslator {
     @Override
     public ResponseEntity<OAuth2Exception> translate(Exception e) throws Exception {
-        log.info("====》  处理异常信息 [exception ]" + e.getClass().getName());
+//        log.info("====》  处理异常信息 [exception ]" + e.getClass().getName());
         if (e instanceof InvalidGrantException) {
             return new ResponseEntity<>(new OAuth2Exception("用户名/密码错误"), HttpStatus.UNAUTHORIZED);
         }

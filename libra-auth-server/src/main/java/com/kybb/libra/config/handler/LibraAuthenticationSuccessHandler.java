@@ -96,6 +96,14 @@ public class LibraAuthenticationSuccessHandler
         OAuth2AccessToken accessToken = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
         IntegrationUser principal = (IntegrationUser) oAuth2Authentication.getPrincipal();
         userFeignClient.updateTokenByUserId(principal.getId(), accessToken.getValue());
+        if (log.isDebugEnabled()) {
+            log.debug(" 生成的===> principal is " + principal.toString());
+            log.debug(" 生成的===> access_token is " + accessToken.toString());
+//            600b4fef-5c73-4172-b981-ae67ffb2df28 202  o9m4Q5a3Szw_aVKVBMYzdOy5MTlI
+//            600b4fef-5c73-4172-b981-ae67ffb2df28 202  o9m4Q5e2G8_8mK-8LXxQ7Jshc7Xs
+
+
+        }
         response.getWriter().write(objectMapper.writeValueAsString(accessToken));
         response.flushBuffer();
     }

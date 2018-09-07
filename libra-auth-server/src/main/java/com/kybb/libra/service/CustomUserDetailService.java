@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import static com.kybb.common.cloud.constants.AuthorizationServerConstants.URL_SPLIT;
 
@@ -80,7 +81,8 @@ public class CustomUserDetailService implements UserDetailsService {
             OAuth2Authentication oAuth2Authentication = tokenStore.readAuthenticationForRefreshToken(tokenStore.readRefreshToken(refresh_token));
             IntegrationUser principal = (IntegrationUser) oAuth2Authentication.getPrincipal();
             if (log.isDebugEnabled()) {
-                log.debug("【before】 refresh token principal is " + principal.toString());
+                log.debug("【before】 refresh token  is " + refresh_token);
+//                log.debug("【before】 refresh token principal is " + principal.toString());
             }
             AccountRequest a = new AccountRequest();
             a.setUserId(principal.getId());
@@ -89,9 +91,6 @@ public class CustomUserDetailService implements UserDetailsService {
             OAuth2Authentication auth2Authentication = new OAuth2Authentication(oAuth2Authentication.getOAuth2Request(), new UsernamePasswordAuthenticationToken(principal, authentication.getCredentials(), authentication.getAuthorities()));
 //            tokenStore.storeAccessToken(oAuth2RefreshToken);
             context.setAuthentication(auth2Authentication);
-            if (log.isDebugEnabled()) {
-                log.debug("【after】 refresh token principal is " + principal.toString());
-            }
             return principal;
         }
         AccountRequest a = new AccountRequest();
@@ -114,7 +113,6 @@ public class CustomUserDetailService implements UserDetailsService {
         ResponseEntity<Body<AccountVO>> responseEntity = userFeignClient.accounts(accountRequest);
         if (log.isDebugEnabled()) {
             log.debug("-=====》 h获取用户信息  accountRequest is " + accountRequest);
-
         }
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             AccountVO accountVO = responseEntity.getBody().getData();
@@ -142,10 +140,10 @@ public class CustomUserDetailService implements UserDetailsService {
                 }
             }
             if (StringUtils.isEmpty(accountVO.getPassword())) {
-                accountVO.setPassword("123456");
+                accountVO.setPassword("[protected]");
             }
             if (StringUtils.isEmpty(accountVO.getUsername())) {
-                accountVO.setUsername("wx_no_username");//微信用户没有username
+                accountVO.setUsername(this.generateRandomUsername());//微信用户没有username
             }
             IntegrationUser integrationUser = new IntegrationUser(accountVO.getUsername(), accountVO.getPassword(),
                     authorities);
@@ -161,7 +159,20 @@ public class CustomUserDetailService implements UserDetailsService {
         }
 
     }
-
+    /**
+     * 图片名生成
+     */
+    private  String generateRandomUsername() {
+        //取当前时间的长整形值包含毫秒
+        long millis = System.currentTimeMillis();
+        //long millis = System.nanoTime();
+        //加上三位随机数
+        Random random = new Random();
+        int end3 = random.nextInt(999);
+        //如果不足三位前面补0
+        String str = millis + String.format("%03d", end3);
+        return str;
+    }
     private boolean isRefreshTokenRequest(HttpServletRequest request) {
         return "refresh_token".equals(request.getParameter("grant_type")) && request.getParameter("refresh_token") != null;
     }
