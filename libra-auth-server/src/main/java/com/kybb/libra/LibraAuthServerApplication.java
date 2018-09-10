@@ -10,6 +10,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.security.core.SpringSecurityMessageSource;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 @SpringBootApplication(scanBasePackages = {"com.kybb"})
 @EnableFeignClients(basePackages = {"com.kybb.**"})
@@ -23,11 +26,12 @@ public class LibraAuthServerApplication {
     }
 
     @Bean
-    public MessageSource securityMessageSource(){
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.addBasenames("classpath:messages");
+    public SpringSecurityMessageSource springSecurityMessageSource() {
+        SpringSecurityMessageSource messageSource = new SpringSecurityMessageSource();
+        messageSource.addBasenames("classpath:com/kybb/libra/messages", "classpath:org/springframework/security/messages");
         return messageSource;
     }
+
 
     public static void main(String[] args) {
         SpringApplication.run(LibraAuthServerApplication.class, args);

@@ -23,11 +23,14 @@ public class WechatAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        //能进到这说明authentication是SmsCodeAuthenticationToken，转一下
+        //能进到这说明authentication是WechatAuthenticationToken，转一下
         WechatAuthenticationToken authenticationToken = (WechatAuthenticationToken) authentication;
         //token.getPrincipal()就是手机号 mobile
         UserDetails user = userDetailsService.loadUserByUsername((String) authenticationToken.getPrincipal());
 
+        if(log.isDebugEnabled()){
+            log.debug("================================》 微信 provider  ");
+        }
         //认证没通过
         if (user == null) {
             throw new InternalAuthenticationServiceException("无法获取微信用户信息");

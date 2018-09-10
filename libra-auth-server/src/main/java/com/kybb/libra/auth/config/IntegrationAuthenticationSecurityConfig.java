@@ -47,10 +47,10 @@ public class IntegrationAuthenticationSecurityConfig extends SecurityConfigurerA
 		smsCodeAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
 
 		//配置provider
-		IntegrationAuthenticationProvider smsCodeAuthenticationProvider = new IntegrationAuthenticationProvider();
-		smsCodeAuthenticationProvider.setUserDetailsService(userDetailsService);
+		IntegrationAuthenticationProvider integrationAuthenticationProvider = new IntegrationAuthenticationProvider();
+		integrationAuthenticationProvider.setUserDetailsService(userDetailsService);
 
-		http.authenticationProvider(smsCodeAuthenticationProvider)
+		http.authenticationProvider(integrationAuthenticationProvider)
 			.addFilterAfter(smsCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 
@@ -69,6 +69,7 @@ public class IntegrationAuthenticationSecurityConfig extends SecurityConfigurerA
 				.addFilterAfter(wechatAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 	}
+
 
 	
 }

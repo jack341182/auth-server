@@ -24,7 +24,7 @@ public class IntegrationAuthenticationProvider implements AuthenticationProvider
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         if (log.isDebugEnabled()) {
-            log.debug("==========>    provider  处理用户信息");
+            log.debug("==========>  sms code   provider  处理用户信息");
         }
         //能进到这说明authentication是SmsCodeAuthenticationToken，转一下
         SmsCodeAuthenticationToken authenticationToken = (SmsCodeAuthenticationToken) authentication;
