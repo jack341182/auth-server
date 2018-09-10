@@ -145,24 +145,20 @@ public class CustomUserDetailService implements UserDetailsService {
             if (StringUtils.isEmpty(accountVO.getUsername())) {
                 accountVO.setUsername(this.generateRandomUsername());//微信用户没有username
             }
-            IntegrationUser integrationUser = new IntegrationUser(accountVO.getUsername(), accountVO.getPassword(),
-                    authorities);
-            integrationUser.setTelephone(accountVO.getTelephone());
-            integrationUser.setId(accountVO.getId());
-            integrationUser.setWxOpenId(accountVO.getWxOpenId());
-            integrationUser.setUserType(accountVO.getUserType());
-            integrationUser.setAppType(accountRequest.getAppType().name());
-            return integrationUser;
+            return new IntegrationUser(accountVO.getUsername(), accountVO.getPassword(), accountVO.getEnabled(),
+                    true, true, true,
+                    authorities, accountVO.getId(), accountVO.getWxOpenId(), accountVO.getEmail(), accountVO.getTelephone(), accountVO.getUserType(), null, accountRequest.getAppType().name());
         } else {
             log.error("服务器异常=== user-center-api");
             throw new InternalAuthenticationServiceException("服务异常。user-center-api");
         }
 
     }
+
     /**
      * 图片名生成
      */
-    private  String generateRandomUsername() {
+    private String generateRandomUsername() {
         //取当前时间的长整形值包含毫秒
         long millis = System.currentTimeMillis();
         //long millis = System.nanoTime();
@@ -173,6 +169,7 @@ public class CustomUserDetailService implements UserDetailsService {
         String str = millis + String.format("%03d", end3);
         return str;
     }
+
     private boolean isRefreshTokenRequest(HttpServletRequest request) {
         return "refresh_token".equals(request.getParameter("grant_type")) && request.getParameter("refresh_token") != null;
     }

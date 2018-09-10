@@ -1,4 +1,4 @@
-package com.kybb.libra.config;
+package com.kybb.libra.auth;
 
 import com.kybb.common.cloud.constants.AuthorizationServerConstants;
 import com.kybb.common.cloud.token.SmsCodeAuthenticationToken;

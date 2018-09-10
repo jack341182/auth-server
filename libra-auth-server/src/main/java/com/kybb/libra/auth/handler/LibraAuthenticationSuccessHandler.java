@@ -1,14 +1,12 @@
-package com.kybb.libra.config.handler;
+package com.kybb.libra.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kybb.common.cloud.integration.IntegrationUser;
 import com.kybb.common.cloud.util.HttpUtil;
-import com.kybb.common.http.Body;
 import com.kybb.libra.feign.UserInfoFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;

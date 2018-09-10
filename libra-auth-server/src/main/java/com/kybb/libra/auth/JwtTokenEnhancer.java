@@ -1,4 +1,4 @@
-package com.kybb.libra.config.enhancer;
+package com.kybb.libra.auth;
 
 import com.kybb.common.cloud.integration.IntegrationUser;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;

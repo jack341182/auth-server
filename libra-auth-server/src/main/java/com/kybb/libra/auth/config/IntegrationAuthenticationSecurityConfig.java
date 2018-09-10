@@ -1,5 +1,9 @@
-package com.kybb.libra.config;
+package com.kybb.libra.auth.config;
 
+import com.kybb.libra.auth.SmsCodeAuthenticationFilter;
+import com.kybb.libra.auth.WechatAuthenticationFilter;
+import com.kybb.libra.auth.provider.IntegrationAuthenticationProvider;
+import com.kybb.libra.auth.provider.WechatAuthenticationProvider;
 import com.kybb.libra.properties.WechatProperties;
 import com.kybb.libra.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +16,6 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * 短信验证码配置

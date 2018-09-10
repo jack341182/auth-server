@@ -1,12 +1,12 @@
-package com.kybb.libra.config.auth;
+package com.kybb.libra.auth.config;
 
-import com.kybb.libra.config.enhancer.JwtTokenEnhancer;
-import com.kybb.libra.config.handler.IntegrationExceptionTranslator;
+
+import com.kybb.libra.auth.JwtTokenEnhancer;
+import com.kybb.libra.auth.handler.IntegrationExceptionTranslator;
 import com.kybb.libra.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

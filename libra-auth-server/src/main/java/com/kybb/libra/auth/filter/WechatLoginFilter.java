@@ -1,4 +1,4 @@
-package com.kybb.libra.config;
+package com.kybb.libra.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kybb.common.cloud.constants.AuthorizationServerConstants;

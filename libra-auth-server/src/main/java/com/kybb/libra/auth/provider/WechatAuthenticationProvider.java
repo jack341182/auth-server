@@ -1,4 +1,4 @@
-package com.kybb.libra.config;
+package com.kybb.libra.auth.provider;
 
 import com.kybb.common.cloud.token.WechatAuthenticationToken;
 import lombok.extern.slf4j.Slf4j;

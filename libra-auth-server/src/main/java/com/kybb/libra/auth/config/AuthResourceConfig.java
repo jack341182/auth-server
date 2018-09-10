@@ -1,9 +1,9 @@
-package com.kybb.libra.config.auth;
+package com.kybb.libra.auth.config;
 
-import com.kybb.libra.config.IntegrationAuthenticationSecurityConfig;
-import com.kybb.libra.config.SmsCodeFilter;
-import com.kybb.libra.config.WechatLoginFilter;
-import com.kybb.libra.config.handler.IntegrationAccessDenyHandler;
+
+import com.kybb.libra.auth.filter.SmsCodeFilter;
+import com.kybb.libra.auth.filter.WechatLoginFilter;
+import com.kybb.libra.auth.handler.IntegrationAccessDenyHandler;
 import com.kybb.libra.service.SmsCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.kybb.libra.config.handler;
+package com.kybb.libra.auth.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;

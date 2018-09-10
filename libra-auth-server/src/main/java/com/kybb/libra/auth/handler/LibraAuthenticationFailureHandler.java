@@ -1,4 +1,4 @@
-package com.kybb.libra.config.handler;
+package com.kybb.libra.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kybb.common.http.Body;
