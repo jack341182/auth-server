@@ -25,12 +25,6 @@ public class LibraAuthServerApplication {
         return new Request.Options(10 * 1000, 10 * 1000);
     }
 
-    @Bean
-    public SpringSecurityMessageSource springSecurityMessageSource() {
-        SpringSecurityMessageSource messageSource = new SpringSecurityMessageSource();
-        messageSource.addBasenames("classpath:com/kybb/libra/messages", "classpath:org/springframework/security/messages");
-        return messageSource;
-    }
 
 
     public static void main(String[] args) {

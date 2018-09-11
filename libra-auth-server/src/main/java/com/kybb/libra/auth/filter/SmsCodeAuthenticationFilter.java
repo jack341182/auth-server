@@ -1,4 +1,4 @@
-package com.kybb.libra.auth;
+package com.kybb.libra.auth.filter;
 
 import com.kybb.common.cloud.constants.AuthorizationServerConstants;
 import com.kybb.common.cloud.token.SmsCodeAuthenticationToken;
@@ -51,7 +51,6 @@ public class SmsCodeAuthenticationFilter extends AbstractAuthenticationProcessin
 
         //把请求里一些信息如ip等set给SmsCodeAuthenticationToken，此时SmsCodeAuthenticationToken还没认证
         setDetails(request, authRequest);
-
         /**
          * 认证，在这里把SmsCodeAuthenticationToken交给AuthenticationManager，
          * 找到SmsCodeAuthenticationProvider，调用其authenticate()方法认证

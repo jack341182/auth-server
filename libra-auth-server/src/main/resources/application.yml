@@ -23,8 +23,12 @@ spring:
       app-secret: ${TRUCKER_APP_SECRET:0acd1a92aee027749eff19d953aee562}
   messages:
     basename: classpath:messages
+  jackson:
+    time-zone: GMT+8
+    locale: zh_CN
 logging:
   level:
     org.springframework.security: info
     com.kybb: debug
+    com.kybb.fiter: info
 #    org.springframework.security.web: debug

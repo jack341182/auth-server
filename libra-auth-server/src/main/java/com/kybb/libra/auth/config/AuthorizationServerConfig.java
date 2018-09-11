@@ -76,6 +76,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         endpoints.exceptionTranslator(integrationExceptionTranslator);
     }
 
+
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security

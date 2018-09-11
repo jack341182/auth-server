@@ -26,6 +26,7 @@ public class IntegrationUser extends User implements Serializable {
     private UserTypeEnum userType;
     private String token;
 
+    private boolean deleted;
 
     private String appType;
 
@@ -33,7 +34,10 @@ public class IntegrationUser extends User implements Serializable {
         super(username, password, authorities);
     }
 
-    public IntegrationUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, Long id, String wxOpenId, String email, String telephone, UserTypeEnum userType, String token, String appType) {
+    public IntegrationUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
+                           boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, Long id,
+                           String wxOpenId, String email, String telephone, UserTypeEnum userType, String token,
+                           String appType,boolean deleted ) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.id = id;
         this.wxOpenId = wxOpenId;
@@ -42,6 +46,7 @@ public class IntegrationUser extends User implements Serializable {
         this.userType = userType;
         this.token = token;
         this.appType = appType;
+        this.deleted = deleted;
     }
 
     @Override

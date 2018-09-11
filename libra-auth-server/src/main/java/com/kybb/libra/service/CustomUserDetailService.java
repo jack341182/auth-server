@@ -65,8 +65,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Autowired
     private TokenStore tokenStore;
 
-    @Autowired
-    private ClientDetailsService clientDetailsService;
+
 
     @Override
     public IntegrationUser loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -147,7 +146,7 @@ public class CustomUserDetailService implements UserDetailsService {
             }
             return new IntegrationUser(accountVO.getUsername(), accountVO.getPassword(), accountVO.getEnabled(),
                     true, true, true,
-                    authorities, accountVO.getId(), accountVO.getWxOpenId(), accountVO.getEmail(), accountVO.getTelephone(), accountVO.getUserType(), null, accountRequest.getAppType().name());
+                    authorities, accountVO.getId(), accountVO.getWxOpenId(), accountVO.getEmail(), accountVO.getTelephone(), accountVO.getUserType(), null, accountRequest.getAppType().name(),accountVO.getDeleted()==null?false:accountVO.getDeleted());
         } else {
             log.error("服务器异常=== user-center-api");
             throw new InternalAuthenticationServiceException("服务异常。user-center-api");

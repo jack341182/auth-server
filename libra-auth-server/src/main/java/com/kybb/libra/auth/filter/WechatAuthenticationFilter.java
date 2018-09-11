@@ -1,4 +1,4 @@
-package com.kybb.libra.auth;
+package com.kybb.libra.auth.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
