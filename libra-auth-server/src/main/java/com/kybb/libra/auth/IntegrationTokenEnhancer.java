@@ -17,7 +17,7 @@ import java.util.Map;
  * spring默认生成token的方法在DefaultTokenService里，是private，生成的是uuid，没办法重写，只能是增强器把uuid转换成jwt，添加一些信息
  */
 @Component
-public class JwtTokenEnhancer implements TokenEnhancer {
+public class IntegrationTokenEnhancer implements TokenEnhancer {
 
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {

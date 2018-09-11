@@ -1,7 +1,7 @@
 package com.kybb.libra.auth.config;
 
 
-import com.kybb.libra.auth.JwtTokenEnhancer;
+import com.kybb.libra.auth.IntegrationTokenEnhancer;
 import com.kybb.libra.auth.handler.IntegrationExceptionTranslator;
 import com.kybb.libra.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -37,8 +39,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private AuthenticationManager authenticationManager;
     @Autowired
     private DataSource dataSource;
-
-
     @Autowired
     private RedisConnectionFactory redisConnectionFactory;
     @Bean
@@ -59,7 +59,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private IntegrationExceptionTranslator integrationExceptionTranslator;
 
     @Autowired
-    JwtTokenEnhancer enhancer;
+    IntegrationTokenEnhancer enhancer;
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         //拿到增强器链
@@ -81,11 +81,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("permitAll()");
+                .checkTokenAccess("isAuthenticated()"); //检查token需要鉴权
     }
+    @Bean
+    public ClientDetailsService clientDetailsService(){
+        return new JdbcClientDetailsService(dataSource);
+    }
+
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.jdbc(dataSource);
+        clients.withClientDetails(clientDetailsService());
+//        clients.jdbc(dataSource);
     }
 }

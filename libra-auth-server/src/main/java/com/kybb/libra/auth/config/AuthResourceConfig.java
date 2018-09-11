@@ -1,18 +1,12 @@
 package com.kybb.libra.auth.config;
 
 
-import com.kybb.libra.auth.filter.SmsCodeFilter;
-import com.kybb.libra.auth.filter.WechatLoginFilter;
-import com.kybb.libra.auth.handler.IntegrationAccessDenyHandler;
-import com.kybb.libra.service.SmsCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 
 /**
  * @Auther: vicykie
@@ -25,37 +19,18 @@ public class AuthResourceConfig extends ResourceServerConfigurerAdapter {
     @Autowired
     IntegrationAuthenticationSecurityConfig integrationAuthenticationSecurityConfig;
 
-    //自定义的登录成功后的处理器
-    @Autowired
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
-
-    //自定义的认证失败后的处理器
-    @Autowired
-    private AuthenticationFailureHandler authenticationFailureHandler;
-
-    @Autowired
-    private SmsCodeService smsCodeService;
-
-    private IntegrationAccessDenyHandler accessDenyHandler;
-
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        SmsCodeFilter filter = new SmsCodeFilter(smsCodeService, authenticationFailureHandler);
-        WechatLoginFilter wechatLoginFilter = new WechatLoginFilter(authenticationFailureHandler);
         http
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(wechatLoginFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin()
-                .successHandler(authenticationSuccessHandler)//自定义的认证后处理器
-                .failureHandler(authenticationFailureHandler) //登录失败后的处理
-                .and()
-                .authorizeRequests()
-                .antMatchers("/token/evict", "/sms/code",  "/oauth/check_token", "/actuator/**", "/encryption/code").permitAll()
-                .and()
-                .exceptionHandling().accessDeniedHandler(accessDenyHandler)
+                .authorizeRequests().antMatchers("/token/evict", "/sms/code",
+                "/actuator/**", "/encryption/code").permitAll()
+                .and().authorizeRequests().anyRequest().authenticated()
                 .and().csrf().disable()
                 .apply(integrationAuthenticationSecurityConfig);
     }
 
-
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        resources.resourceId("auth-server");
+    }
 }

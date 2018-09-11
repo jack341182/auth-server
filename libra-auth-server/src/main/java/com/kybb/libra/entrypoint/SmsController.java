@@ -51,13 +51,6 @@ public class SmsController {
         return smsCodeStatus.isSuccess() ? ResponseUtil.ok(smsCodeStatus.getCode(), smsCodeStatus.getMessage()) : ResponseUtil.notAcceptable(smsCodeStatus.getMessage());
     }
 
-    @GetMapping("/test")
-    public ResponseEntity test() {
-        List<Long> ids = new ArrayList<>();
-        ids.add(4L);
-//        ResponseEntity<Body<List<UserInfoVO>>> userInfo = userFeignClient.getUserInfo(ids);
 
-        return ResponseEntity.ok("");
-    }
 
 }
