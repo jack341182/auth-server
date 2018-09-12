@@ -66,12 +66,10 @@ public class CustomUserDetailService implements UserDetailsService {
     private TokenStore tokenStore;
 
 
-
     @Override
     public IntegrationUser loadUserByUsername(String username) throws UsernameNotFoundException {
         if (log.isDebugEnabled()) {
-            log.debug(" request is  refesh token ? " + isRefreshTokenRequest(request));
-            log.debug("=====登录用户=== " + username);
+            log.debug(" request is  refesh token ? " + isRefreshTokenRequest(request) + "  ==== 登录用户 ====" + username);
         }
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
@@ -81,7 +79,6 @@ public class CustomUserDetailService implements UserDetailsService {
             IntegrationUser principal = (IntegrationUser) oAuth2Authentication.getPrincipal();
             if (log.isDebugEnabled()) {
                 log.debug("【before】 refresh token  is " + refresh_token);
-//                log.debug("【before】 refresh token principal is " + principal.toString());
             }
             AccountRequest a = new AccountRequest();
             a.setUserId(principal.getId());
@@ -127,17 +124,16 @@ public class CustomUserDetailService implements UserDetailsService {
                 Long[] ids = new Long[]{};
                 bodyResponseEntity = userAuthFeignClient.listByRoleIds(idList.toArray(ids));
             }
-            if (bodyResponseEntity != null && bodyResponseEntity.getStatusCode() != HttpStatus.OK) {
-                authorities.add(new SimpleGrantedAuthority("no_authorities" + URL_SPLIT + "get"));
-            } else {
+            if (bodyResponseEntity != null && bodyResponseEntity.getStatusCode() == HttpStatus.OK) {
                 List<ModuleVO> data = bodyResponseEntity.getBody().getData();
                 if (CollectionUtils.isEmpty(data)) {
                     authorities.add(new SimpleGrantedAuthority("no_authorities" + URL_SPLIT + "get"));
                 } else {
                     data.forEach(moduleVO -> authorities.add(
-                            new SimpleGrantedAuthority(moduleVO.getUrl() + URL_SPLIT + moduleVO.getMethod())));
+                            new SimpleGrantedAuthority(moduleVO.getApplicationName() + moduleVO.getUrl() + URL_SPLIT + moduleVO.getMethod())));
                 }
             }
+            authorities.add(new SimpleGrantedAuthority("no_authorities" + URL_SPLIT + "get"));
             if (StringUtils.isEmpty(accountVO.getPassword())) {
                 accountVO.setPassword("[protected]");
             }
@@ -146,7 +142,8 @@ public class CustomUserDetailService implements UserDetailsService {
             }
             return new IntegrationUser(accountVO.getUsername(), accountVO.getPassword(), accountVO.getEnabled(),
                     true, true, true,
-                    authorities, accountVO.getId(), accountVO.getWxOpenId(), accountVO.getEmail(), accountVO.getTelephone(), accountVO.getUserType(), null, accountRequest.getAppType().name(),accountVO.getDeleted()==null?false:accountVO.getDeleted());
+                    authorities, accountVO.getId(), accountVO.getWxOpenId(), accountVO.getEmail(), accountVO.getTelephone(), accountVO.getUserType(), null,
+                    accountRequest.getAppType().name(), accountVO.getDeleted() == null ? false : accountVO.getDeleted());
         } else {
             log.error("服务器异常=== user-center-api");
             throw new InternalAuthenticationServiceException("服务异常。user-center-api");
