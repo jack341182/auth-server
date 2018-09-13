@@ -1,4 +1,4 @@
-package com.kybb.libra.auth;
+package com.kybb.libra.exception;
 
 import org.springframework.security.authentication.AccountStatusException;
 

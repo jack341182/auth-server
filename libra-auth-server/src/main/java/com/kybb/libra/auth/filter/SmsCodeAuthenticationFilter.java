@@ -1,8 +1,14 @@
 package com.kybb.libra.auth.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kybb.common.cloud.constants.AuthorizationServerConstants;
+import com.kybb.common.cloud.integration.IntegrationUser;
+import com.kybb.common.cloud.integration.SmsCodeLogin;
 import com.kybb.common.cloud.token.SmsCodeAuthenticationToken;
+import com.kybb.common.cloud.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -24,6 +30,7 @@ public class SmsCodeAuthenticationFilter extends AbstractAuthenticationProcessin
     public static final String PARAM_MOBILE = "mobile";
 
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private boolean postOnly = true;//只处理post请求
 
 
@@ -38,6 +45,9 @@ public class SmsCodeAuthenticationFilter extends AbstractAuthenticationProcessin
             throw new AuthenticationServiceException(
                     "Authentication method not supported: " + request.getMethod());
         }
+        SmsCodeLogin loginMsg = HttpUtil.getLoginMsg(request);
+        checkParameter(loginMsg, request, response);
+
         //获取手机号
         String mobile = obtainMobile(request);
 
@@ -46,8 +56,10 @@ public class SmsCodeAuthenticationFilter extends AbstractAuthenticationProcessin
         }
 
         mobile = AuthorizationServerConstants.SMS_CODE_PREFIX + mobile.trim();
+
+
         //到这里认证还没通过，SmsCodeAuthenticationToken一个参数的构造，是没有认证通过的
-        SmsCodeAuthenticationToken authRequest = new SmsCodeAuthenticationToken(mobile);
+        SmsCodeAuthenticationToken authRequest = new SmsCodeAuthenticationToken(mobile, loginMsg.getSmsCode(), loginMsg.getDeviceId());
 
         //把请求里一些信息如ip等set给SmsCodeAuthenticationToken，此时SmsCodeAuthenticationToken还没认证
         setDetails(request, authRequest);
@@ -92,5 +104,28 @@ public class SmsCodeAuthenticationFilter extends AbstractAuthenticationProcessin
         this.postOnly = postOnly;
     }
 
-
+    private void checkParameter(SmsCodeLogin loginMsg, HttpServletRequest request, HttpServletResponse response) {
+        String header = request.getHeader("Authorization");
+        //没有client信息
+        if (header == null || !header.startsWith("Basic ")) {
+            throw new AuthenticationServiceException(
+                    "请求头没有client 信息");
+        }
+        if (loginMsg == null) {
+            throw new AuthenticationServiceException(
+                    "缺少登录信息");
+        }
+        if (StringUtils.isEmpty(loginMsg.getDeviceId())) {
+            throw new AuthenticationServiceException(
+                    "缺少deviceId");
+        }
+        if (StringUtils.isEmpty(loginMsg.getMobile())) {
+            throw new AuthenticationServiceException(
+                    "mobile信息错误");
+        }
+        if (StringUtils.isEmpty(loginMsg.getSmsCode())) {
+            throw new AuthenticationServiceException(
+                    "smsCode 为空");
+        }
+    }
 }

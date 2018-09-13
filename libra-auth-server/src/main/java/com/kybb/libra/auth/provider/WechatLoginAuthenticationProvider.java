@@ -1,7 +1,9 @@
 package com.kybb.libra.auth.provider;
 
+import com.kybb.common.cloud.integration.IntegrationUser;
 import com.kybb.common.cloud.token.SmsCodeAuthenticationToken;
 import com.kybb.common.cloud.token.WechatAuthenticationToken;
+import com.kybb.libra.service.CustomUserDetailService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,7 @@ import org.springframework.stereotype.Component;
 public class WechatLoginAuthenticationProvider extends AbstractIntegrationAuthenticationProvider {
     private PasswordEncoder passwordEncoder;
 
-    private UserDetailsService userDetailsService;
+    private CustomUserDetailService userDetailsService;
 
     private MessageSource springSecurityMessageSource;
     /**
@@ -34,7 +36,7 @@ public class WechatLoginAuthenticationProvider extends AbstractIntegrationAuthen
      */
     private volatile String userNotFoundEncodedPassword;
     @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, AbstractAuthenticationToken authentication) throws AuthenticationException {
+    protected void additionalAuthenticationChecks(IntegrationUser userDetails, AbstractAuthenticationToken authentication) throws AuthenticationException {
 
     }
 
@@ -63,11 +65,11 @@ public class WechatLoginAuthenticationProvider extends AbstractIntegrationAuthen
      * @return
      * @throws AuthenticationException
      */
-    protected UserDetails retrieveUser(String username, AbstractAuthenticationToken authenticationToken) throws AuthenticationException {
+    protected IntegrationUser retrieveUser(String username, AbstractAuthenticationToken authenticationToken) throws AuthenticationException {
 
         prepareTimingAttackProtection();
         try {
-            UserDetails loadedUser = this.getUserDetailsService().loadUserByUsername(username);
+            IntegrationUser loadedUser = this.getUserDetailsService().loadUserByUsername(username);
             if (loadedUser == null) {
                 throw new InternalAuthenticationServiceException(
                         "UserDetailsService returned null, which is an interface contract violation");

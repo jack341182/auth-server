@@ -6,6 +6,7 @@ import com.kybb.libra.auth.provider.SmsCodeLoginAuthenticationProvider;
 import com.kybb.libra.auth.provider.WechatLoginAuthenticationProvider;
 import com.kybb.libra.properties.WechatProperties;
 import com.kybb.libra.service.CustomUserDetailService;
+import com.kybb.libra.service.SmsCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -69,12 +70,16 @@ public class IntegrationAuthenticationSecurityConfig extends SecurityConfigurerA
                 .addFilterAfter(wechatAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
+    @Autowired
+    SmsCodeService smsCodeService;
+
     @Bean
     public AuthenticationProvider smsCodeAuthenticationProvider() {
         //配置provider
         SmsCodeLoginAuthenticationProvider smsCodeAuthenticationProvider = new SmsCodeLoginAuthenticationProvider();
         smsCodeAuthenticationProvider.setUserDetailsService(userDetailsService);
         smsCodeAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        smsCodeAuthenticationProvider.setSmsCodeService(smsCodeService);
         return smsCodeAuthenticationProvider;
     }
 
@@ -84,6 +89,7 @@ public class IntegrationAuthenticationSecurityConfig extends SecurityConfigurerA
         WechatLoginAuthenticationProvider wechatAuthenticationProvider = new WechatLoginAuthenticationProvider();
         wechatAuthenticationProvider.setUserDetailsService(userDetailsService);
         wechatAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+
         return wechatAuthenticationProvider;
     }
 

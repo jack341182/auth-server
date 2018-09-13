@@ -1,7 +1,7 @@
 package com.kybb.libra.auth.provider;
 
 import com.kybb.common.cloud.integration.IntegrationUser;
-import com.kybb.libra.auth.DeletedException;
+import com.kybb.libra.exception.DeletedException;
 import com.kybb.libra.auth.IntegrationMessageResourceBundle;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,9 +31,9 @@ public abstract class AbstractIntegrationAuthenticationProvider implements Authe
      * @return
      * @throws AuthenticationException
      */
-    protected abstract UserDetails retrieveUser(String username, AbstractAuthenticationToken authenticationToken) throws AuthenticationException ;
+    protected abstract IntegrationUser retrieveUser(String username, AbstractAuthenticationToken authenticationToken) throws AuthenticationException ;
 
-    protected abstract void additionalAuthenticationChecks(UserDetails userDetails, AbstractAuthenticationToken authentication) throws AuthenticationException;
+    protected abstract void additionalAuthenticationChecks(IntegrationUser userDetails, AbstractAuthenticationToken authentication) throws AuthenticationException;
 
     public abstract void setPasswordEncoder(PasswordEncoder passwordEncoder);
 
@@ -60,7 +60,7 @@ public abstract class AbstractIntegrationAuthenticationProvider implements Authe
         // Determine username
         String username = (authentication.getPrincipal() == null) ? "NONE_PROVIDED"
                 : authentication.getName();
-        UserDetails user = retrieveUser(username,
+        IntegrationUser user = retrieveUser(username,
                 (AbstractAuthenticationToken) authentication);
         try {
             preAuthenticationChecks.check(user);
@@ -142,7 +142,7 @@ public abstract class AbstractIntegrationAuthenticationProvider implements Authe
                     }
                     throw new DisabledException(messages.getMessage(
                             "AbstractUserDetailsAuthenticationProvider.disabled",
-                            "用户已禁用"));
+                            "此账号已被禁用 有问题请联系客服"));
                 }
 
                 if (!user.isAccountNonExpired()) {

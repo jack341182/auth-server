@@ -23,7 +23,7 @@ public class AuthResourceConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests().antMatchers("/token/evict", "/sms/code",
-                "/actuator/**", "/encryption/code").permitAll()
+                "/actuator/**", "/encryption/code","/consul/**").permitAll()
                 .and().authorizeRequests().anyRequest().authenticated()
                 .and().csrf().disable()
                 .apply(integrationAuthenticationSecurityConfig);

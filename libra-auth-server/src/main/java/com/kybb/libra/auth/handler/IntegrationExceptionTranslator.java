@@ -21,7 +21,7 @@ public class IntegrationExceptionTranslator<E extends OAuth2Exception> extends D
                 return new ResponseEntity(new InvalidGrantException("用户名或密码错误"), HttpStatus.UNAUTHORIZED);
             }
             if (e.getMessage().equalsIgnoreCase("用户已失效")) {
-                return new ResponseEntity(new InvalidGrantException("用户已禁用"), HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity(new InvalidGrantException("此账号已被禁用 有问题请联系客服"), HttpStatus.UNAUTHORIZED);
             }
         }
         return super.translate(e);

@@ -116,34 +116,35 @@ public class CustomUserDetailService implements UserDetailsService {
                 throw new UsernameNotFoundException("用户不存在");
             }
             List<GrantedAuthority> authorities = new ArrayList<>();
-            List<Long> idList = accountVO.getRoleIds();
-            ResponseEntity<Body<List<ModuleVO>>> bodyResponseEntity = null;
-            if (CollectionUtils.isEmpty(idList)) {//非后台用户没有角色
-                bodyResponseEntity = userAuthFeignClient.listByUserType(accountVO.getUserType().getValue());
-            } else {
-                Long[] ids = new Long[]{};
-                bodyResponseEntity = userAuthFeignClient.listByRoleIds(idList.toArray(ids));
-            }
-            if (bodyResponseEntity != null && bodyResponseEntity.getStatusCode() == HttpStatus.OK) {
-                List<ModuleVO> data = bodyResponseEntity.getBody().getData();
-                if (CollectionUtils.isEmpty(data)) {
-                    authorities.add(new SimpleGrantedAuthority("no_authorities" + URL_SPLIT + "get"));
-                } else {
-                    data.forEach(moduleVO -> authorities.add(
-                            new SimpleGrantedAuthority(moduleVO.getApplicationName() + moduleVO.getUrl() + URL_SPLIT + moduleVO.getMethod())));
-                }
-            }
-            authorities.add(new SimpleGrantedAuthority("no_authorities" + URL_SPLIT + "get"));
-            if (StringUtils.isEmpty(accountVO.getPassword())) {
-                accountVO.setPassword("[protected]");
-            }
-            if (StringUtils.isEmpty(accountVO.getUsername())) {
-                accountVO.setUsername(this.generateRandomUsername());//微信用户没有username
-            }
+            authorities.add(new SimpleGrantedAuthority(accountVO.getUserType().name()));
+//            List<Long> idList = accountVO.getRoleIds();
+//            ResponseEntity<Body<List<ModuleVO>>> bodyResponseEntity = null;
+//            if (CollectionUtils.isEmpty(idList)) {//非后台用户没有角色
+//                bodyResponseEntity = userAuthFeignClient.listByUserType(accountVO.getUserType().getValue());
+//            } else {
+//                Long[] ids = new Long[]{};
+//                bodyResponseEntity = userAuthFeignClient.listByRoleIds(idList.toArray(ids));
+//            }
+//            if (bodyResponseEntity != null && bodyResponseEntity.getStatusCode() == HttpStatus.OK) {
+//                List<ModuleVO> data = bodyResponseEntity.getBody().getData();
+//                if (CollectionUtils.isEmpty(data)) {
+//                    authorities.add(new SimpleGrantedAuthority("no_authorities" + URL_SPLIT + "get"));
+//                } else {
+//                    data.forEach(moduleVO -> authorities.add(
+//                            new SimpleGrantedAuthority(moduleVO.getApplicationName() + moduleVO.getUrl() + URL_SPLIT + moduleVO.getMethod())));
+//                }
+//            }
+//            authorities.add(new SimpleGrantedAuthority("no_authorities" + URL_SPLIT + "get"));
+//            if (StringUtils.isEmpty(accountVO.getPassword())) {
+//                accountVO.setPassword("[protected]");
+//            }
+//            if (StringUtils.isEmpty(accountVO.getUsername())) {
+//                accountVO.setUsername(this.generateRandomUsername());//微信用户没有username
+//            }
             return new IntegrationUser(accountVO.getUsername(), accountVO.getPassword(), accountVO.getEnabled(),
                     true, true, true,
                     authorities, accountVO.getId(), accountVO.getWxOpenId(), accountVO.getEmail(), accountVO.getTelephone(), accountVO.getUserType(), null,
-                    accountRequest.getAppType().name(), accountVO.getDeleted() == null ? false : accountVO.getDeleted());
+                    accountRequest.getAppType().name(), accountVO.getDeleted() == null ? false : accountVO.getDeleted(),accountVO.getRoleIds());
         } else {
             log.error("服务器异常=== user-center-api");
             throw new InternalAuthenticationServiceException("服务异常。user-center-api");

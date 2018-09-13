@@ -15,7 +15,7 @@ spring:
   application:
     name: auth-server
   redis:
-    host: ${REDIS_HOST:10.1.10.239}
+    host: ${REDIS_HOST:10.1.80.234}
     database: ${REDIS_DATABASE:3}
   wechat:
     trucker:
@@ -29,5 +29,5 @@ spring:
 logging:
   level:
     org.springframework.security: info
-    com.kybb.fiter: info
+    com.kybb: debug
 #    org.springframework.security.web: debug

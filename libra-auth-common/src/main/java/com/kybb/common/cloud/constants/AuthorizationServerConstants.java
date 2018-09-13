@@ -22,6 +22,8 @@ public class AuthorizationServerConstants {
     public static final String WECHAT_PREFIX = "@_WECHAT_@";
 
 
-    public static final String URL_SPLIT=" : ";
+    public static final String URL_SPLIT = " : ";
 
+
+    public static final String REDIS_SPACE_ROLE = "role.authorities";
 }

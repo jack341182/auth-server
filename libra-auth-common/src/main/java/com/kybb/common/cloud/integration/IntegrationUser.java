@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.User;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @Auther: vicykie
@@ -27,7 +29,7 @@ public class IntegrationUser extends User implements Serializable {
     private String token;
 
     private boolean deleted;
-
+    private List<Long> roleIds = Collections.emptyList();
     private String appType;
 
     public IntegrationUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
@@ -37,7 +39,7 @@ public class IntegrationUser extends User implements Serializable {
     public IntegrationUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
                            boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, Long id,
                            String wxOpenId, String email, String telephone, UserTypeEnum userType, String token,
-                           String appType,boolean deleted ) {
+                           String appType, boolean deleted, List<Long> roleIds) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.id = id;
         this.wxOpenId = wxOpenId;
@@ -47,6 +49,7 @@ public class IntegrationUser extends User implements Serializable {
         this.token = token;
         this.appType = appType;
         this.deleted = deleted;
+        this.roleIds = roleIds;
     }
 
     @Override
@@ -58,8 +61,10 @@ public class IntegrationUser extends User implements Serializable {
                 ", telephone='" + telephone + '\'' +
                 ", userType=" + userType +
                 ", token='" + token + '\'' +
+                ", deleted=" + deleted +
+                ", roleIds=" + roleIds +
                 ", appType='" + appType + '\'' +
-                ", super="+ super.toString()+'\''+
+                ", super='" + super.toString() + '\'' +
                 '}';
     }
 }
