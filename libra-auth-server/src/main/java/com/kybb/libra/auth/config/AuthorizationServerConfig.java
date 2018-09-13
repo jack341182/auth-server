@@ -53,7 +53,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @Qualifier("bCryptPasswordEncoder")
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(4);
     }
 
 
