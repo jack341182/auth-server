@@ -1,11 +1,6 @@
 package com.kybb.libra.service;
 
-import com.kybb.columba.message.enums.MessageBusinessEnum;
-import com.kybb.columba.message.request.MessageRequest;
-import com.kybb.columba.message.vo.SmsCaptchaVO;
 import com.kybb.common.cloud.integration.SmsCodeLogin;
-import com.kybb.common.cloud.integration.SmsCodeRequest;
-import com.kybb.common.http.Body;
 import com.kybb.libra.bean.SmsCodeStatus;
 import com.kybb.libra.feign.MessageFeignClient;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +8,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.AntPathMatcher;
 
 import java.util.concurrent.TimeUnit;
 

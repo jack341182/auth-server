@@ -1,21 +1,17 @@
 package com.kybb.libra.entrypoint;
 
 import com.kybb.common.cloud.integration.SmsCodeLogin;
-import com.kybb.common.cloud.integration.SmsCodeRequest;
-import com.kybb.common.http.Body;
 import com.kybb.common.http.ResponseUtil;
-
 import com.kybb.libra.bean.SmsCodeStatus;
 import com.kybb.libra.feign.UserInfoFeignClient;
 import com.kybb.libra.service.SmsCodeService;
-import com.kybb.solar.user.vo.UserInfoVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @Auther: vicykie

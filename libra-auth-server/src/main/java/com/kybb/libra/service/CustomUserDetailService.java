@@ -4,15 +4,11 @@ import com.kybb.common.cloud.constants.AuthorizationServerConstants;
 import com.kybb.common.cloud.integration.IntegrationUser;
 import com.kybb.common.cloud.util.HttpUtil;
 import com.kybb.common.http.Body;
-import com.kybb.libra.feign.UserAuthFeignClient;
 import com.kybb.libra.feign.UserInfoFeignClient;
 import com.kybb.solar.user.enums.ApplicationTypeEnum;
 import com.kybb.solar.user.request.AccountRequest;
 import com.kybb.solar.user.vo.AccountVO;
-import com.kybb.solar.user.vo.ModuleVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,21 +21,16 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-
-import static com.kybb.common.cloud.constants.AuthorizationServerConstants.URL_SPLIT;
 
 /**
  * @Auther: vicykie
@@ -52,10 +43,8 @@ import static com.kybb.common.cloud.constants.AuthorizationServerConstants.URL_S
 public class CustomUserDetailService implements UserDetailsService {
     @Autowired
     private UserInfoFeignClient userFeignClient;
-    @Autowired
-    private UserAuthFeignClient userAuthFeignClient;
-//    @Autowired
-//    private ModuleFeignClient moduleFeignClient;
+
+
 
     @Autowired
     private HttpServletRequest request;
@@ -117,30 +106,6 @@ public class CustomUserDetailService implements UserDetailsService {
             }
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(accountVO.getUserType().name()));
-//            List<Long> idList = accountVO.getRoleIds();
-//            ResponseEntity<Body<List<ModuleVO>>> bodyResponseEntity = null;
-//            if (CollectionUtils.isEmpty(idList)) {//非后台用户没有角色
-//                bodyResponseEntity = userAuthFeignClient.listByUserType(accountVO.getUserType().getValue());
-//            } else {
-//                Long[] ids = new Long[]{};
-//                bodyResponseEntity = userAuthFeignClient.listByRoleIds(idList.toArray(ids));
-//            }
-//            if (bodyResponseEntity != null && bodyResponseEntity.getStatusCode() == HttpStatus.OK) {
-//                List<ModuleVO> data = bodyResponseEntity.getBody().getData();
-//                if (CollectionUtils.isEmpty(data)) {
-//                    authorities.add(new SimpleGrantedAuthority("no_authorities" + URL_SPLIT + "get"));
-//                } else {
-//                    data.forEach(moduleVO -> authorities.add(
-//                            new SimpleGrantedAuthority(moduleVO.getApplicationName() + moduleVO.getUrl() + URL_SPLIT + moduleVO.getMethod())));
-//                }
-//            }
-//            authorities.add(new SimpleGrantedAuthority("no_authorities" + URL_SPLIT + "get"));
-//            if (StringUtils.isEmpty(accountVO.getPassword())) {
-//                accountVO.setPassword("[protected]");
-//            }
-//            if (StringUtils.isEmpty(accountVO.getUsername())) {
-//                accountVO.setUsername(this.generateRandomUsername());//微信用户没有username
-//            }
             return new IntegrationUser(accountVO.getUsername(), accountVO.getPassword(), accountVO.getEnabled(),
                     true, true, true,
                     authorities, accountVO.getId(), accountVO.getWxOpenId(), accountVO.getEmail(), accountVO.getTelephone(), accountVO.getUserType(), null,

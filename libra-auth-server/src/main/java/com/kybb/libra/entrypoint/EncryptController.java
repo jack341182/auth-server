@@ -1,14 +1,8 @@
 package com.kybb.libra.entrypoint;
 
-import com.kybb.common.http.Body;
-import com.kybb.common.http.ResponseUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.ClientRegistrationService;
-import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/encryption")
+@Slf4j
 public class EncryptController {
 
     @Autowired
@@ -28,18 +23,13 @@ public class EncryptController {
 
     @PostMapping("/code")
     public String encrypt(@RequestParam("input") String input) {
-        return passwordEncoder.encode(input);
+        String encode = passwordEncoder.encode(input);
+        if (log.isDebugEnabled()) {
+            log.debug("===  input str is " + input);
+            log.debug("===  encode  str is " + encode);
+        }
+        return encode;
     }
 
 
-
-
-//    public static void main(String[] args) {
-//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//        String raw = "b8a5d79fdffc7766c64735288beb064b";
-//        String raw1 = "e10adc3949ba59abbe56e057f20f883e";
-//        System.out.println(encoder.encode(raw));
-//        System.out.println(encoder.matches(raw, "$2a$10$By1N1IAuZB4nVm52svL3UuGC7n20I7knwSjNBjyRkXdg0T9EfF.fC"));
-//        System.out.println(encoder.matches(raw1, "$2a$10$JE4GSz2cvk0sbew8rqC3ue08owNWumRzEBokvIHC8PZyXf8ujt5Ja"));
-//    }
 }
