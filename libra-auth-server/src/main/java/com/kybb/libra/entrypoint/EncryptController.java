@@ -24,7 +24,7 @@ public class EncryptController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/code")
-    public String encrypt(@RequestBody String input) {
+    public String encrypt(@RequestParam String input) {
         String encode = passwordEncoder.encode(input);
         if (log.isDebugEnabled()) {
             log.debug("===  input str is " + input);
