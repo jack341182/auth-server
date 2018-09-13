@@ -23,7 +23,7 @@ public interface AuthenticationFeignClient {
      * @return
      */
     @PostMapping("/encryption/code")
-    String encrypt(@RequestBody String input);
+    String encrypt(@RequestParam("input") String input);
 
     /**
      * 清除token，
