@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -22,7 +23,7 @@ public interface AuthenticationFeignClient {
      * @return
      */
     @PostMapping("/encryption/code")
-    String encrypt(@RequestParam("input") String input);
+    String encrypt(@RequestBody String input);
 
     /**
      * 清除token，

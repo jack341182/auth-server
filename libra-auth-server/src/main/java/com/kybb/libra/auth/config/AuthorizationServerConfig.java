@@ -5,8 +5,11 @@ import com.kybb.libra.auth.IntegrationTokenEnhancer;
 import com.kybb.libra.auth.handler.IntegrationExceptionTranslator;
 import com.kybb.libra.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -47,6 +50,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     @Bean
+    @Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    @Qualifier("bCryptPasswordEncoder")
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
