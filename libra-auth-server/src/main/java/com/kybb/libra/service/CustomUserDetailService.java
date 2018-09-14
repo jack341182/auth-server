@@ -45,7 +45,6 @@ public class CustomUserDetailService implements UserDetailsService {
     private UserInfoFeignClient userFeignClient;
 
 
-
     @Autowired
     private HttpServletRequest request;
     //spring工具类
@@ -106,10 +105,10 @@ public class CustomUserDetailService implements UserDetailsService {
             }
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(accountVO.getUserType().name()));
-            return new IntegrationUser(accountVO.getUsername(), accountVO.getPassword(), accountVO.getEnabled(),
+            return new IntegrationUser(accountVO.getUsername(), accountVO.getPassword(), accountVO.getEnabled() == null ? true : accountVO.getEnabled(),
                     true, true, true,
                     authorities, accountVO.getId(), accountVO.getWxOpenId(), accountVO.getEmail(), accountVO.getTelephone(), accountVO.getUserType(), null,
-                    accountRequest.getAppType().name(), accountVO.getDeleted() == null ? false : accountVO.getDeleted(),accountVO.getRoleIds());
+                    accountRequest.getAppType().name(), accountVO.getDeleted() == null ? false : accountVO.getDeleted(), accountVO.getRoleIds());
         } else {
             log.error("服务器异常=== user-center-api");
             throw new InternalAuthenticationServiceException("服务异常。user-center-api");

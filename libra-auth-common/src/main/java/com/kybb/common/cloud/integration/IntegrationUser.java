@@ -36,7 +36,7 @@ public class IntegrationUser extends User implements Serializable {
         super(username, password, authorities);
     }
 
-    public IntegrationUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
+    public IntegrationUser(String username, String password, Boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
                            boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, Long id,
                            String wxOpenId, String email, String telephone, UserTypeEnum userType, String token,
                            String appType, boolean deleted, List<Long> roleIds) {
