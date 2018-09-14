@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kybb.common.cloud.integration.IntegrationUser;
 import com.kybb.common.cloud.util.HttpUtil;
 import com.kybb.libra.feign.UserInfoFeignClient;
+import com.kybb.libra.service.SmsCodeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class LibraAuthenticationSuccessHandler
     private ClientDetailsService clientDetailsService;
 
     @Autowired
-    private PasswordEncoder encoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserInfoFeignClient userFeignClient;
@@ -51,7 +52,9 @@ public class LibraAuthenticationSuccessHandler
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-
+        if (log.isDebugEnabled()) {
+            log.debug("=====================登录成功=========================");
+        }
         //获取请求头里Authorization信息
         String header = request.getHeader("Authorization");
         /**
@@ -60,7 +63,6 @@ public class LibraAuthenticationSuccessHandler
         //base64解码获取clientId、clientSecret
         String[] tokens = HttpUtil.extractAndDecodeHeader(header, request);
         assert tokens.length == 2;
-
         String clientId = tokens[0];
         String clientSecret = tokens[1];
         response.setContentType("application/json;charset=UTF-8");
@@ -70,7 +72,7 @@ public class LibraAuthenticationSuccessHandler
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         if (clientDetails == null) {
             throw new UnapprovedClientAuthenticationException("clientId对应的配置信息不存在，clientId:" + clientId);
-        } else if (!encoder.matches(clientSecret, clientDetails.getClientSecret())) {
+        } else if (!passwordEncoder.matches(clientSecret, clientDetails.getClientSecret())) {
             throw new UnapprovedClientAuthenticationException("clientSecret不匹配，clientId:" + clientId);
         }
 
@@ -93,14 +95,11 @@ public class LibraAuthenticationSuccessHandler
          */
         OAuth2AccessToken accessToken = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
         IntegrationUser principal = (IntegrationUser) oAuth2Authentication.getPrincipal();
+        //更新用户信息
         userFeignClient.updateTokenByUserId(principal.getId(), accessToken.getValue());
         if (log.isDebugEnabled()) {
-            log.debug(" 生成的===> principal is " + principal.toString());
+            log.debug("======> principal is " + principal.toString()+" <=======");
             log.debug(" 生成的===> access_token is " + accessToken.toString());
-//            600b4fef-5c73-4172-b981-ae67ffb2df28 202  o9m4Q5a3Szw_aVKVBMYzdOy5MTlI
-//            600b4fef-5c73-4172-b981-ae67ffb2df28 202  o9m4Q5e2G8_8mK-8LXxQ7Jshc7Xs
-
-
         }
         response.getWriter().write(objectMapper.writeValueAsString(accessToken));
         response.flushBuffer();

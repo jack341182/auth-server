@@ -28,7 +28,7 @@ hystrix:
           enabled: true
         isolation:
           thread:
-            timeoutInMilliseconds: 3000
+            timeoutInMilliseconds: 5000
 #  threadpool:
 #    default:
 #      coreSize: 50 #缺省为10

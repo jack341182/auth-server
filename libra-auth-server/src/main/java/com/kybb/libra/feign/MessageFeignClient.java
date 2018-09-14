@@ -15,15 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(value = "columba-message", fallbackFactory = MessageServiceFallbackFactory.class)
 public interface MessageFeignClient {
-    @PostMapping({"/mobiles/captcha"})
+    @PostMapping({"/mobiles/inner/captcha"})
     ResponseEntity<Body<SmsCaptchaVO>> sendCaptcha(@RequestBody MessageRequest messageRequest);
 }
 
 @Component
 @Slf4j
 class MessageServiceFallbackFactory implements FallbackFactory<MessageFeignClient> {
-    @Value("${spring.application.name}")
-    private String applicationName;
 
     @Override
     public MessageFeignClient create(Throwable throwable) {
@@ -31,9 +29,7 @@ class MessageServiceFallbackFactory implements FallbackFactory<MessageFeignClien
             @Override
             public ResponseEntity<Body<SmsCaptchaVO>> sendCaptcha(MessageRequest messageRequest) {
                 log.error("[exception] " + throwable.getClass().getName() + " [error message] " + throwable.getMessage() + "  [args] " + messageRequest);
-
-                return ResponseUtil.formThrowError(throwable, applicationName);
-
+                return ResponseUtil.ok();
             }
         };
     }

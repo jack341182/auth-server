@@ -27,13 +27,11 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class SmsCodeService {
-
     private static final String SMS_CODE_PREFIX = "sms_code_cache_";
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private MessageFeignClient messageFeignClient;
 
@@ -53,7 +51,8 @@ public class SmsCodeService {
                     .mobile(smsCodeLogin.getMobile())
                     .business(MessageBusinessEnum.LOGIN_CAPTCHA)
                     .build());
-            if (bodyResponseEntity.getStatusCode().value() >= HttpStatus.OK.value() && bodyResponseEntity.getStatusCode().value() < 300) {
+            int status = bodyResponseEntity.getStatusCode().value();
+            if (status >= HttpStatus.OK.value() && status < 300 && status!= HttpStatus.NO_CONTENT.value()) {
                 SmsCaptchaVO captchaVO = bodyResponseEntity.getBody().getData();
                 String code = captchaVO.getValidateCode();
 //                String code = "123456";
@@ -62,11 +61,10 @@ public class SmsCodeService {
                 redisTemplate.opsForValue().set(SMS_CODE_PREFIX + smsCodeLogin.getMobile() + smsCodeLogin.getDeviceId(),
                         encode, 5, TimeUnit.MINUTES);
                 if (log.isDebugEnabled()) {
-                    log.debug(" mobile " + smsCodeLogin.getMobile() + " code " + code);
+                    log.debug(" mobile " + smsCodeLogin.getMobile() + " code " + code+",md5 " +md5Hex+", encode " +encode);
                 }
                 return SmsCodeStatus.builder()
                         .success(true)
-                        .code(code)
                         .message("验证码发送成功")
                         .build();
             }
@@ -80,14 +78,6 @@ public class SmsCodeService {
                     .message("验证码未失效，请检查手机短信")
                     .build();
         }
-    }
-
-    public String encode(String raw) {
-        return passwordEncoder.encode(raw);
-    }
-
-    public boolean match(String raw, String encode) {
-        return passwordEncoder.matches(raw, encode);
     }
 
     public String getCode(SmsCodeLogin smsCodeRequest) {
