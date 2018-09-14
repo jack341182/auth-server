@@ -4,10 +4,7 @@ import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Auther: vicykie
@@ -34,6 +31,14 @@ public interface AuthenticationFeignClient {
      */
     @PutMapping("/token/evict")
     void evictToken(@RequestParam("token") String token);
+
+    /**
+     * @param raw    原始密码（md5）
+     * @param encode 加密后
+     * @return
+     */
+    @GetMapping("/encryption/matches")
+    boolean matches(@RequestParam("raw") String raw, @RequestParam("encode") String encode);
 }
 
 @Component
@@ -51,6 +56,12 @@ class AuthenticationFallBackFactory implements FallbackFactory<AuthenticationFei
             @Override
             public void evictToken(String token) {
                 log.error("[exception] " + throwable.getClass().getName() + " [error message] " + throwable.getMessage() + "  [args] " + token);
+            }
+
+            @Override
+            public boolean matches(String raw, String encode) {
+                log.error("[exception] " + throwable.getClass().getName() + " [error message] " + throwable.getMessage() + "  [args] " + raw + " , " + encode);
+                return false;
             }
         };
     }

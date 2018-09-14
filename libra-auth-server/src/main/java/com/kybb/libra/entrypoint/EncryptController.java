@@ -33,5 +33,14 @@ public class EncryptController {
         return encode;
     }
 
+    @GetMapping("/matches")
+    public boolean matches(@RequestParam("raw") String raw, @RequestParam("encode") String encode) {
+        if (log.isDebugEnabled()) {
+            log.debug("===  raw password is " + raw);
+            log.debug("===  encode  password is " + encode);
+        }
+        return passwordEncoder.matches(raw, encode);
+    }
+
 
 }
