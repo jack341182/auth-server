@@ -52,9 +52,12 @@ public class SmsCodeLoginAuthenticationProvider extends AbstractIntegrationAuthe
         if (authentication instanceof SmsCodeAuthenticationToken) {
             SmsCodeLogin smsCodeLogin = new SmsCodeLogin();
             smsCodeLogin.setDeviceId(((SmsCodeAuthenticationToken) authentication).getDeviceId());
-            smsCodeLogin.setSmsCode(((SmsCodeAuthenticationToken) authentication).getSmsCode());
+//            smsCodeLogin.setSmsCode(((SmsCodeAuthenticationToken) authentication).getSmsCode());
             smsCodeLogin.setMobile(userDetails.getUsername());
             String encode = smsCodeService.getCode(smsCodeLogin);
+            if (log.isDebugEnabled()) {
+                log.debug("===== encode is ==  " + encode + "  ===  code is" + ((SmsCodeAuthenticationToken) authentication).getSmsCode());
+            }
             if (StringUtils.isEmpty(encode) || !passwordEncoder.matches(((SmsCodeAuthenticationToken) authentication).getSmsCode(), encode)) {
                 throw new InvalidCodeException("验证码不正确");
             }
