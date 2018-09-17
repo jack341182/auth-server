@@ -52,16 +52,19 @@ public class SmsCodeService {
                     .business(MessageBusinessEnum.LOGIN_CAPTCHA)
                     .build());
             int status = bodyResponseEntity.getStatusCode().value();
-            if (status >= HttpStatus.OK.value() && status < 300 && status!= HttpStatus.NO_CONTENT.value()) {
+            if (status >= HttpStatus.OK.value() && status < 300 && status != HttpStatus.NO_CONTENT.value()) {
                 SmsCaptchaVO captchaVO = bodyResponseEntity.getBody().getData();
                 String code = captchaVO.getValidateCode();
 //                String code = "123456";
                 String md5Hex = DigestUtils.md5Hex(code);
                 String encode = passwordEncoder.encode(md5Hex);
+                if (log.isDebugEnabled()) {
+                    log.debug("===============insert code  device id is ====  " + smsCodeLogin.getDeviceId());
+                }
                 redisTemplate.opsForValue().set(SMS_CODE_PREFIX + smsCodeLogin.getMobile() + smsCodeLogin.getDeviceId(),
                         encode, 5, TimeUnit.MINUTES);
                 if (log.isDebugEnabled()) {
-                    log.debug(" mobile " + smsCodeLogin.getMobile() + " code " + code+",md5 " +md5Hex+", encode " +encode);
+                    log.debug(" mobile " + smsCodeLogin.getMobile() + " code " + code + ",md5 " + md5Hex + ", encode " + encode);
                 }
                 return SmsCodeStatus.builder()
                         .success(true)
@@ -81,6 +84,9 @@ public class SmsCodeService {
     }
 
     public String getCode(SmsCodeLogin smsCodeRequest) {
+        if (log.isDebugEnabled()) {
+            log.debug("===============getcode  device id is ====  " + smsCodeRequest.getDeviceId());
+        }
         return (String) redisTemplate.opsForValue().get(SMS_CODE_PREFIX + smsCodeRequest.getMobile() + smsCodeRequest.getDeviceId());
     }
 
