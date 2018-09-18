@@ -8,7 +8,8 @@ spring:
       discovery:
         query-passing: true
 #        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-        instance-id: ${spring.application.name}:${spring.cloud.consul.discovery.hostname}:${server.port}
+        instance-id: ${spring.application.name}-${spring.cloud.consul.discovery.hostname}-${server.port}
+#        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
 feign:
   hystrix:
     enabled: true
