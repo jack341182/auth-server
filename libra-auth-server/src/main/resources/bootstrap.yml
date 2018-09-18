@@ -6,10 +6,12 @@ spring:
       ribbon:
         enabled: true
       discovery:
+        heartbeat:
+          enabled: true
         query-passing: true
 #        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
 #        instance-id: ${spring.application.name}-${spring.cloud.consul.discovery.ip-address}-${server.port}
-        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+#        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
 feign:
   hystrix:
     enabled: true
