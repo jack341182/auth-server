@@ -40,7 +40,7 @@ import java.util.Random;
  */
 @Component
 @Slf4j
-public class CustomUserDetailService implements UserDetailsService {
+public class IntegrationUserDetailService implements UserDetailsService {
     @Autowired
     private UserInfoFeignClient userFeignClient;
 

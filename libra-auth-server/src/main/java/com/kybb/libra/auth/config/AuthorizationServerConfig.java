@@ -2,13 +2,15 @@ package com.kybb.libra.auth.config;
 
 
 import com.kybb.libra.auth.IntegrationTokenEnhancer;
+import com.kybb.libra.auth.IntegrationTokenService;
 import com.kybb.libra.auth.handler.IntegrationExceptionTranslator;
-import com.kybb.libra.service.CustomUserDetailService;
+import com.kybb.libra.service.IntegrationUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +23,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -58,11 +61,27 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 
     @Autowired
-    private CustomUserDetailService userDetailsService;
+    private IntegrationUserDetailService userDetailsService;
 
     @Autowired
     private IntegrationExceptionTranslator integrationExceptionTranslator;
 
+    @Bean
+    @Primary
+    public AuthorizationServerTokenServices tokenServices(){
+        TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+        List<TokenEnhancer> enhancers = new ArrayList<TokenEnhancer>();
+//        enhancers.add(jwtAccessTokenConverter());
+        enhancers.add(enhancer);
+        enhancerChain.setTokenEnhancers(enhancers);
+        IntegrationTokenService integrationTokenService = new IntegrationTokenService();
+        integrationTokenService.setTokenStore(tokenStore());
+        integrationTokenService.setAuthenticationManager(authenticationManager);
+        integrationTokenService.setTokenEnhancer(enhancerChain);
+        integrationTokenService.setAlwaysNewAccessToken(true);
+        integrationTokenService.setSupportRefreshToken(true);
+        return integrationTokenService;
+    }
     @Autowired
     IntegrationTokenEnhancer enhancer;
     @Override
@@ -74,11 +93,16 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         enhancers.add(enhancer);
         enhancerChain.setTokenEnhancers(enhancers);
 
-        endpoints.tokenStore(tokenStore())
-                .authenticationManager(authenticationManager)
-                .userDetailsService(userDetailsService);
-        endpoints.tokenEnhancer(enhancerChain);
-        endpoints.exceptionTranslator(integrationExceptionTranslator);
+        endpoints.tokenStore(tokenStore()).tokenServices(tokenServices())
+                .userDetailsService(userDetailsService).tokenEnhancer(enhancerChain)
+                .exceptionTranslator(integrationExceptionTranslator).authenticationManager(authenticationManager);
+
+//        endpoints.userDetailsService(userDetailsService);
+//        endpoints.tokenStore(tokenStore())
+//                .authenticationManager(authenticationManager)
+//                .userDetailsService(userDetailsService);
+//        endpoints.tokenEnhancer(enhancerChain);
+//        endpoints.exceptionTranslator(integrationExceptionTranslator);
     }
 
 

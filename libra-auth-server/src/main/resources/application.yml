@@ -26,6 +26,10 @@ spring:
   jackson:
     time-zone: GMT+8
     locale: zh_CN
+  auth:
+    config:
+      default-sms-code: ${DEFAULT_SMS_CODE:123456}
+      phone-for-test: ${PHONE_FOR_TEST:13000000000,13000000001,13000000002,13000000003,13000000004,13000000005,13000000006,13000000007,13000000008,17700000000,17700000001,17700000002,17700000003,17700000004,17706420616}
 logging:
   level:
     org.springframework.security: info

@@ -4,21 +4,16 @@ import com.kybb.common.cloud.integration.IntegrationUser;
 import com.kybb.common.cloud.integration.SmsCodeLogin;
 import com.kybb.common.cloud.token.SmsCodeAuthenticationToken;
 import com.kybb.libra.exception.InvalidCodeException;
-import com.kybb.libra.service.CustomUserDetailService;
+import com.kybb.libra.service.IntegrationUserDetailService;
 import com.kybb.libra.service.SmsCodeService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.SpringSecurityMessageSource;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -30,7 +25,7 @@ import org.springframework.stereotype.Component;
 public class SmsCodeLoginAuthenticationProvider extends AbstractIntegrationAuthenticationProvider {
     private PasswordEncoder passwordEncoder;
 
-    private CustomUserDetailService userDetailsService;
+    private IntegrationUserDetailService userDetailsService;
 
 
     private SmsCodeService smsCodeService;

@@ -1,9 +1,8 @@
 package com.kybb.libra.auth.provider;
 
 import com.kybb.common.cloud.integration.IntegrationUser;
-import com.kybb.common.cloud.token.SmsCodeAuthenticationToken;
 import com.kybb.common.cloud.token.WechatAuthenticationToken;
-import com.kybb.libra.service.CustomUserDetailService;
+import com.kybb.libra.service.IntegrationUserDetailService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +10,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -24,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class WechatLoginAuthenticationProvider extends AbstractIntegrationAuthenticationProvider {
     private PasswordEncoder passwordEncoder;
 
-    private CustomUserDetailService userDetailsService;
+    private IntegrationUserDetailService userDetailsService;
 
     private MessageSource springSecurityMessageSource;
     /**

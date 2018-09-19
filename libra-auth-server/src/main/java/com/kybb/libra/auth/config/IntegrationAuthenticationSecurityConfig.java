@@ -5,7 +5,7 @@ import com.kybb.libra.auth.filter.WechatAuthenticationFilter;
 import com.kybb.libra.auth.provider.SmsCodeLoginAuthenticationProvider;
 import com.kybb.libra.auth.provider.WechatLoginAuthenticationProvider;
 import com.kybb.libra.properties.WechatProperties;
-import com.kybb.libra.service.CustomUserDetailService;
+import com.kybb.libra.service.IntegrationUserDetailService;
 import com.kybb.libra.service.SmsCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,7 +36,7 @@ public class IntegrationAuthenticationSecurityConfig extends SecurityConfigurerA
     private AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Autowired
-    private CustomUserDetailService userDetailsService;
+    private IntegrationUserDetailService userDetailsService;
 
     @Autowired
     private WechatProperties wechatProperties;
