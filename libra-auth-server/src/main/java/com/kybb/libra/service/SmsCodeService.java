@@ -87,7 +87,7 @@ public class SmsCodeService {
             log.debug(" mobile " + smsCodeLogin.getMobile() + " code " + code + ",md5 " + md5Hex + ", encode " + encode);
         }
         redisTemplate.opsForValue().set(SMS_CODE_PREFIX + smsCodeLogin.getMobile() + smsCodeLogin.getDeviceId(),
-                encode, 5, TimeUnit.MINUTES);
+                encode, 1, TimeUnit.MINUTES);
     }
 
     public String getCode(SmsCodeLogin smsCodeRequest) {
