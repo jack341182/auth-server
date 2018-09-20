@@ -1,6 +1,13 @@
 package com.kybb.libra.auth;
 
 import com.kybb.common.cloud.integration.IntegrationUser;
+import com.kybb.common.http.Body;
+import com.kybb.libra.feign.UserInfoFeignClient;
+import com.kybb.solar.user.enums.ApplicationTypeEnum;
+import com.kybb.solar.user.request.AccountRequest;
+import com.kybb.solar.user.vo.AccountVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -18,7 +25,8 @@ import java.util.Map;
  */
 @Component
 public class IntegrationTokenEnhancer implements TokenEnhancer {
-
+    @Autowired
+    private UserInfoFeignClient userFeignClient;
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         //往jwt添加的自定义信息
@@ -26,11 +34,16 @@ public class IntegrationTokenEnhancer implements TokenEnhancer {
 
         Map<String, Object> info = new HashMap<>();
         info.put("userId", principal.getId());
-
+        AccountRequest a = new AccountRequest();
+        a.setUserId(principal.getId());
+        a.setAppType(ApplicationTypeEnum.valueOf(principal.getAppType()));
+        ResponseEntity<Body<AccountVO>> accounts = userFeignClient.accounts(a);
+        AccountVO accountVO = accounts.getBody().getData();
 //        info.put("wxOpenId", principal.getWxOpenId());
 //        info.put("telephone", principal.getTelephone());
-        info.put("userType", principal.getUserType());
+        info.put("userType", accountVO.getUserType());
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
+        principal.setUserType(accountVO.getUserType());
         return accessToken;
     }
 
