@@ -49,9 +49,9 @@ public class SmsCodeService {
     public SmsCodeStatus saveAndSendCode(SmsCodeLogin smsCodeLogin) {
 
         // 检查缓存的验证码
-        String cacheCode = getCode(smsCodeLogin);
+//        String cacheCode = getCode(smsCodeLogin);
         String code = authorizationProperties.getDefaultSmsCode();
-        if (StringUtils.isEmpty(cacheCode)) {
+//        if (StringUtils.isEmpty(cacheCode)) {
             if (CollectionUtils.isNotEmpty(authorizationProperties.getPhoneForTest()) &&
                     authorizationProperties.getPhoneForTest().contains(smsCodeLogin.getMobile())) {
                 code = authorizationProperties.getDefaultSmsCode();
@@ -72,12 +72,12 @@ public class SmsCodeService {
                     .success(true)
                     .message("验证码发送成功")
                     .build();
-        } else {
-            return SmsCodeStatus.builder()
-                    .success(false)
-                    .message("验证码未失效，请检查手机短信")
-                    .build();
-        }
+//        } else {
+//            return SmsCodeStatus.builder()
+//                    .success(false)
+//                    .message("验证码未失效，请检查手机短信")
+//                    .build();
+//        }
     }
 
     private void saveCode(SmsCodeLogin smsCodeLogin, String code) {
@@ -87,7 +87,7 @@ public class SmsCodeService {
             log.debug(" mobile " + smsCodeLogin.getMobile() + " code " + code + ",md5 " + md5Hex + ", encode " + encode);
         }
         redisTemplate.opsForValue().set(SMS_CODE_PREFIX + smsCodeLogin.getMobile() + smsCodeLogin.getDeviceId(),
-                encode, 1, TimeUnit.MINUTES);
+                encode, 5, TimeUnit.MINUTES);
     }
 
     public String getCode(SmsCodeLogin smsCodeRequest) {
