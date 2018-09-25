@@ -34,4 +34,5 @@ logging:
   level:
     org.springframework.security: info
     com.kybb: info
+
 #    org.springframework.security.web: debug
