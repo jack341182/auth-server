@@ -1,21 +1,14 @@
 version: '3'
 services:
-  libra-auth-server:
-    image: libra-auth-server
-    ports:
-      - "6666:8080"
-    expose:
-      - 8080
+  auth-server:
+    image: ${DOCKER_REGISTRY}/auth-server:${DOCKER_IMAGE_TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file:
-      - /home/service/common/common.env
+    - /home/service/common/common.env
     environment:
-      REDIS_DATABASE: 3
-    container_name: libra-auth-server
-    deploy:
-      resources:
-        limits:
-          memory: 800M
-networks:
-  default:
-    external:
-      name: spring-cloud-network
+      REDIS_DATABASE: 0
+      RUN_ARGS: "--server.port=6666"
+    container_name: auth-server
+    network_mode: host
