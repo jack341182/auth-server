@@ -13,7 +13,7 @@ services:
     container_name: auth-server
     network_mode: host
     volumes:
-      - auth-server: /var/log
+      - "auth-server:/var/log"
 volumes:
   auth-server:
     driver: local
