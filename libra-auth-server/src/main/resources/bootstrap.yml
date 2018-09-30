@@ -1,7 +1,7 @@
 spring:
   cloud:
     consul:
-      host: ${DS_SERVER_HOST:10.1.80.234}
+      host: ${DS_SERVER_HOST:10.1.80.166}
       ## 解决第一次调用不到服务的情况
       ribbon:
         enabled: true

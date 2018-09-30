@@ -57,7 +57,7 @@ public class IntegrationUserDetailService implements UserDetailsService {
     @Override
     public IntegrationUser loadUserByUsername(String username) throws UsernameNotFoundException {
         if (log.isDebugEnabled()) {
-            log.debug(" request is  refesh token ? " + isRefreshTokenRequest(request) + "  ==== 登录用户 ====" + username);
+            log.debug(" request is  refresh token ? " + isRefreshTokenRequest(request) + "  ==== 登录用户 ====" + username);
         }
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
