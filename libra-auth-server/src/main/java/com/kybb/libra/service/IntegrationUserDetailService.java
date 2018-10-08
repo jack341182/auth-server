@@ -117,7 +117,7 @@ public class IntegrationUserDetailService implements UserDetailsService {
     }
 
     /**
-     * 图片名生成
+     * 随机username
      */
     private String generateRandomUsername() {
         //取当前时间的长整形值包含毫秒
