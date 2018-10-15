@@ -22,7 +22,7 @@ public class AuthResourceConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests().antMatchers("/token/evict", "/sms/code",
+                .authorizeRequests().antMatchers("/token/evict", "/sms/code","/",
                 "/actuator/**", "/encryption/**","/consul/**").permitAll()
                 .and().authorizeRequests().anyRequest().authenticated()
                 .and().csrf().disable()
